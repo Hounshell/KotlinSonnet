@@ -1,6 +1,6 @@
 package com.hounshell.kotlin_sonnet.types
 
-class KotlinRealTypeReference(val canonicalName: String, val isNullable: Boolean = false) : KotlinTypeReference
+class KotlinRealTypeReference(val canonicalName: String, override val isNullable: Boolean = false) : KotlinTypeReference
 {
     constructor(javaClass: Class<*>, isNullable: Boolean = false): this(javaClass.canonicalName!!, isNullable)
 
