@@ -7,6 +7,7 @@ import com.hounshell.kotlin_sonnet.KotlinFile
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
 interface KotlinFunction : CodeWriter
@@ -27,12 +28,27 @@ interface KotlinFunction : CodeWriter
     interface Builder<P> : KotlinFunction.BuilderBase<Builder<P>, P>
     {}
 
-    class Impl<PARENT>(
-        name: String,
-        parent: PARENT,
-        callback: (KotlinFunction) -> Unit
-    ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunction>(KotlinFunctionSignature.Impl(name), parent, callback)
-    {}
+    companion object
+    {
+        @JvmStatic
+        fun <PARENT> impl(
+            name: String,
+            parent: PARENT,
+            callback: (KotlinFunction) -> Unit
+        ): Builder<PARENT> = Impl(name, parent, callback)
+
+        private class Impl<PARENT>(
+            name: String,
+            parent: PARENT,
+            callback: (KotlinFunction) -> Unit
+        ) : ImplBase<Builder<PARENT>, PARENT, KotlinFunction>(
+            KotlinFunctionSignature.Impl(name),
+            parent,
+            callback
+        ),
+            Builder<PARENT>
+        {}
+    }
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinFunction>(
         private val signature: KotlinFunctionSignature.Builder,

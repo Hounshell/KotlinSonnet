@@ -2,6 +2,7 @@ package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.KotlinFile
+import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
@@ -15,17 +16,29 @@ interface KotlinExtensionFunction : KotlinFunction
     interface Builder<PARENT> : BuilderBase<Builder<PARENT>, PARENT>
     {}
 
-    class Impl<PARENT>(
+    companion object
+    {
+        @JvmStatic
+        fun <PARENT> impl(
             onType: KotlinTypeReference,
             name: String,
             parent: PARENT,
             callback: (KotlinExtensionFunction) -> Unit
-    ) : ImplBase<Builder<PARENT>, PARENT, KotlinExtensionFunction>(
+        ): Builder<PARENT> = Impl(onType, name, parent, callback)
+
+        private class Impl<PARENT>(
+            onType: KotlinTypeReference,
+            name: String,
+            parent: PARENT,
+            callback: (KotlinExtensionFunction) -> Unit
+        ) : ImplBase<Builder<PARENT>, PARENT, KotlinExtensionFunction>(
             KotlinFunctionSignature.Impl(name, onType = onType),
             parent,
-            callback),
-        Builder<PARENT>
-    {}
+            callback
+        ),
+            Builder<PARENT>
+        {}
+    }
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinExtensionFunction>(
             signature: KotlinFunctionSignature.Builder,

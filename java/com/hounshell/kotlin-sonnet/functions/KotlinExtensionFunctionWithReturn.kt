@@ -9,19 +9,31 @@ interface KotlinExtensionFunctionWithReturn : KotlinExtensionFunction
         KotlinFunctionWithReturn.BuilderBase<Builder<P>, P>
     {}
 
-    class Impl<P>(
-        onType: KotlinTypeReference,
-        name: String,
-        returnType: KotlinTypeReference,
-        parent: P,
-        callback: (KotlinExtensionFunctionWithReturn) -> Unit
-    ) :
-        KotlinExtensionFunction.ImplBase<Builder<P>, P, KotlinExtensionFunctionWithReturn>(
-            KotlinFunctionSignature.Impl(name, returnType, onType),
-            parent,
-            callback
-        ),
-        Builder<P>,
-        KotlinExtensionFunctionWithReturn
-    {}
+    companion object
+    {
+        @JvmStatic
+        fun <PARENT> impl(
+            onType: KotlinTypeReference,
+            name: String,
+            returnType: KotlinTypeReference,
+            parent: PARENT,
+            callback: (KotlinExtensionFunctionWithReturn) -> Unit
+        ): Builder<PARENT> = Impl(onType, name, returnType, parent, callback)
+
+        private class Impl<PARENT>(
+            onType: KotlinTypeReference,
+            name: String,
+            returnType: KotlinTypeReference,
+            parent: PARENT,
+            callback: (KotlinExtensionFunctionWithReturn) -> Unit
+        ) :
+            KotlinExtensionFunction.ImplBase<Builder<PARENT>, PARENT, KotlinExtensionFunctionWithReturn>(
+                KotlinFunctionSignature.Impl(name, returnType, onType),
+                parent,
+                callback
+            ),
+            Builder<PARENT>,
+            KotlinExtensionFunctionWithReturn
+        {}
+    }
 }

@@ -56,11 +56,11 @@ interface KotlinFile {
         }
 
         override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>> {
-            return KotlinExtensionFunction.Impl(onType, name, this) { f -> extensionFunctions.add(f) }
+            return KotlinExtensionFunction.impl(onType, name, this) { f -> extensionFunctions.add(f) }
         }
 
         override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>> {
-            return KotlinExtensionFunctionWithReturn.Impl(onType, name, returnType, this) { f -> extensionFunctions.add(f) }
+            return KotlinExtensionFunctionWithReturn.impl(onType, name, returnType, this) { f -> extensionFunctions.add(f) }
         }
 
         // TODO: Classes, Interfaces, Enums, Static imports, ...?
