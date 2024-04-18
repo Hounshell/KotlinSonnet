@@ -3,6 +3,7 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.KotlinFile
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
@@ -14,6 +15,12 @@ interface KotlinFunction : CodeWriter
         KotlinFunctionSignature.BuilderBase<THIS>,
             KotlinBlock.BuilderBase<THIS>
     {
+
+        fun define(work: BuilderBase<THIS, PARENT>.() -> Unit): PARENT {
+            apply(work)
+            return endFunction()
+        }
+
         fun endFunction(): PARENT
     }
 

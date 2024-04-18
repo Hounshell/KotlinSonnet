@@ -13,16 +13,16 @@ class ExtensionFunctionTests {
     fun `addExtensionFunction basic operation`() {
         val parent = KotlinFiles()
         val file = parent
-            .addKotlinFile("foo.kt")
-            .addExtensionFunction(type(String::class.java), "print")
-            .addStatement(literal(false))
-            .addStatement(literal("7"))
-            .endFunction()
-            .addExtensionFunction(type(String::class.java), "printAndReturn", type(String::class.java))
-            .addStatement(literal(true))
-            .addStatement(literal(7F))
-            .endFunction()
-            .endFile()
+            .addKotlinFile("foo.kt").define {
+                addExtensionFunction(type(String::class.java), "print").define {
+                    addStatement(literal(false))
+                    addStatement(literal("7"))
+                }
+                .addExtensionFunction(type(String::class.java), "printAndReturn", type(String::class.java)).define {
+                    addStatement(literal(true))
+                    addStatement(literal(7F))
+                }
+            }
             .getFileByPath("foo.kt")!!
 
         val writer = StringWriter();

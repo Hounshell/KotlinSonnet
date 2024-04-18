@@ -22,6 +22,11 @@ interface KotlinFile {
 
         // TODO: Support more contents of a file.
 
+        fun define(work: Builder<P>.() -> Unit): P {
+            apply(work)
+            return endFile()
+        }
+
         fun endFile(): P
     }
 
