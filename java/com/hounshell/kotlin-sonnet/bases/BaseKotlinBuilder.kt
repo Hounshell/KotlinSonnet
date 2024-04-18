@@ -1,8 +1,6 @@
 package com.hounshell.kotlin_sonnet.bases
 
-import java.util.Collections
-
-abstract class BaseKotlinBlock<CALLBACK, PARENT>(
+abstract class BaseKotlinBuilder<CALLBACK, PARENT>(
     private val parent: PARENT,
     private val callback: ((CALLBACK) -> Unit)?) {
 

@@ -3,7 +3,7 @@
 package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
+import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 import java.io.Writer
@@ -33,7 +33,7 @@ interface KotlinBlock : CodeWriter
     }
 
     abstract class ImplBase<THIS : BuilderBase<THIS>>() :
-        BaseKotlinBlock<Void?, Void?>(null, null),
+        BaseKotlinBuilder<Void?, Void?>(null, null),
         BuilderBase<THIS>,
         KotlinBlock
     {

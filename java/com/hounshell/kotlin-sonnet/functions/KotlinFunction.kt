@@ -3,7 +3,7 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
+import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 import com.hounshell.kotlin_sonnet.types.TypeReference
@@ -33,7 +33,7 @@ interface KotlinFunction : CodeWriter
         parent: PARENT,
         callback: (CALLBACK) -> Unit
     ) :
-        BaseKotlinBlock<CALLBACK, PARENT>(parent, callback),
+        BaseKotlinBuilder<CALLBACK, PARENT>(parent, callback),
         BuilderBase<THIS, PARENT>,
             KotlinFunction
     {

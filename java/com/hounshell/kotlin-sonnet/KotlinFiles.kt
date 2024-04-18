@@ -1,10 +1,10 @@
 package com.hounshell.kotlin_sonnet
 
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
+import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import java.util.Collections
 
 class KotlinFiles():
-    BaseKotlinBlock<KotlinFiles, Void?>(null, null)
+    BaseKotlinBuilder<KotlinFiles, Void?>(null, null)
 {
     private val files: MutableMap<String, KotlinFile> = mutableMapOf()
 

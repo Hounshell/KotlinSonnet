@@ -1,9 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.KotlinFile
 import com.hounshell.kotlin_sonnet.types.TypeReference
-import java.io.Writer
 
 interface KotlinFunctionWithReturn : KotlinFunction
 {

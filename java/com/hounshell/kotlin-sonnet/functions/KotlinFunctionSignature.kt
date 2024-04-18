@@ -1,9 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
-import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
-import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
 import com.hounshell.kotlin_sonnet.types.TypeReference
 import java.io.Writer
 

@@ -15,6 +15,8 @@ class ExtensionFunctionTests {
         val file = parent
             .addKotlinFile("foo.kt")
             .addExtensionFunction(RealTypeReference(String::class.java), "print")
+            .addStatement(literal(false))
+            .addStatement(literal("7"))
             .endFunction()
             .addExtensionFunction(RealTypeReference(String::class.java), "printAndReturn", RealTypeReference(String::class.java))
             .addStatement(literal(true))
