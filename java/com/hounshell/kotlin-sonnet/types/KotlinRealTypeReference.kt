@@ -1,8 +1,8 @@
 package com.hounshell.kotlin_sonnet.types
 
-class KotlinRealTypeReference(val canonicalName: String) : KotlinTypeReference
+class KotlinRealTypeReference(val canonicalName: String, val isNullable: Boolean = false) : KotlinTypeReference
 {
-    constructor(javaClass: Class<*>): this(javaClass.canonicalName!!)
+    constructor(javaClass: Class<*>, isNullable: Boolean = false): this(javaClass.canonicalName!!, isNullable)
 
     private val baseName = canonicalName
         .splitToSequence('$')
@@ -39,16 +39,26 @@ class KotlinRealTypeReference(val canonicalName: String) : KotlinTypeReference
 
     override fun asDeclaration(): String
     {
+        return if (isNullable) {
+            "${asName()}?" }
+        else {
+            asName()
+        }
+    }
+
+    override fun asName(): String {
         return if (packageName == "java.lang") {
             localName
         } else {
             canonicalName
         }
     }
-
-    override fun asName() = asDeclaration()
 }
 
 fun type(javaClass: Class<*>) = KotlinRealTypeReference(javaClass)
 
 fun type(canonicalName: String) = KotlinRealTypeReference(canonicalName)
+
+fun nullableType(javaClass: Class<*>) = KotlinRealTypeReference(javaClass, true)
+
+fun nullableType(canonicalName: String) = KotlinRealTypeReference(canonicalName, true)

@@ -1,6 +1,7 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
@@ -9,7 +10,7 @@ interface KotlinFunctionSignature {
 
     interface BuilderBase<THIS : BuilderBase<THIS>>
     {
-        fun addParameter(variable: VariableDeclaration): THIS
+        fun addParameter(parameter: KotlinParameterDeclaration): THIS
     }
 
     interface Builder : BuilderBase<Builder>, CodeWriter
@@ -23,11 +24,11 @@ interface KotlinFunctionSignature {
         Builder,
         KotlinFunctionSignature
     {
-        private val parameters: MutableList<VariableDeclaration> = mutableListOf()
+        private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
 
-        override fun addParameter(variable: VariableDeclaration): Builder
+        override fun addParameter(parameter: KotlinParameterDeclaration): Builder
         {
-            parameters.add(variable)
+            parameters.add(parameter)
             return this
         }
 
@@ -39,13 +40,24 @@ interface KotlinFunctionSignature {
                 writer.write("${indent}fun $name")
             }
 
-            writer.write("(/* TODO: KotlinFunctionSignature arguments not implemented yet. */)")
+            if (parameters.isEmpty())
+            {
+                writer.write("()")
+            } else {
+                writer.write("(\n$indent    ")
+                parameters.first().writeTo(writer, true)
+
+                for (parameter in parameters.drop(1)) {
+                    writer.write(",\n$indent    ")
+                    parameter.writeTo(writer, true)
+                }
+                writer.write("\n$indent)")
+            }
 
             if (returnType != null) {
                 writer.write(": ${returnType.asDeclaration()}")
             }
+            writer.write(" ")
         }
     }
 }
-
-interface VariableDeclaration {}

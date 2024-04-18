@@ -3,11 +3,11 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.KotlinFile
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
-import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
+import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
+import com.hounshell.kotlin_sonnet.types.KotlinVariableDeclaration
 import java.io.Writer
 
 interface KotlinFunction : CodeWriter
@@ -61,10 +61,10 @@ interface KotlinFunction : CodeWriter
     {
         private val body = KotlinBlock.impl()
 
-        override fun addParameter(variable: VariableDeclaration): THIS
+        override fun addParameter(parameter: KotlinParameterDeclaration): THIS
         {
             assertNotClosed()
-            signature.addParameter(variable)
+            signature.addParameter(parameter)
             return this as THIS
         }
 

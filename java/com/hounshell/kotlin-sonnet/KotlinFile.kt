@@ -79,7 +79,7 @@ interface KotlinFile {
             // TODO: Support more contents of a file.
         }
 
-        private fun writeSection(writer: Writer, members: List<out CodeWriter>, spaceBetween: Boolean = true) {
+        private fun writeSection(writer: Writer, members: List<CodeWriter>, spaceBetween: Boolean = true) {
             var first = true;
             for (member in members) {
                 if (first || spaceBetween) {
