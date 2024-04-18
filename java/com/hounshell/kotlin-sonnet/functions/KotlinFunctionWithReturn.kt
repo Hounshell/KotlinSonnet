@@ -20,27 +20,19 @@ interface KotlinFunctionWithReturn : KotlinFunction
             returnType: TypeReference,
             parent: PARENT,
             callback: (KotlinFunctionWithReturn) -> Unit
-    ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunctionWithReturn>(name, returnType, parent, callback)
+    ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunctionWithReturn>(
+            KotlinFunctionSignature.Impl(name, returnType),
+            parent,
+            callback)
     {}
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinFunctionWithReturn>(
-            name: String,
-            val returnType: TypeReference,
+            signature: KotlinFunctionSignature.Builder,
             parent: PARENT,
             callback: (CALLBACK) -> Unit
     ) :
-            KotlinFunction.ImplBase<THIS, PARENT, CALLBACK>(name, parent, callback),
+            KotlinFunction.ImplBase<THIS, PARENT, CALLBACK>(signature, parent, callback),
             BuilderBase<THIS, PARENT>,
             KotlinFunctionWithReturn
-    {
-        override fun writeTo(writer: Writer, indent: String)
-        {
-            writer.write("${indent}fun $name")
-            writeFunctionArguments(writer, "$indent    ")
-            writer.write(": ${returnType.asDeclaration()} ")
-            writer.write("${indent}{\n")
-            writeFunctionBody(writer, "$indent  ")
-            writer.write("${indent}}\n")
-        }
-    }
+    {}
 }

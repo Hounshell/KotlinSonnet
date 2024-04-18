@@ -20,27 +20,21 @@ interface KotlinExtensionFunction : KotlinFunction
             name: String,
             parent: PARENT,
             callback: (KotlinExtensionFunction) -> Unit
-    ) : ImplBase<Builder<PARENT>, PARENT, KotlinExtensionFunction>(onType, name, parent, callback),
+    ) : ImplBase<Builder<PARENT>, PARENT, KotlinExtensionFunction>(
+            KotlinFunctionSignature.Impl(name, onType = onType),
+            parent,
+            callback),
         Builder<PARENT>
     {}
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinExtensionFunction>(
-            val onType: TypeReference,
-            name: String,
+            signature: KotlinFunctionSignature.Builder,
             parent: PARENT,
             callback: (CALLBACK) -> Unit
     ) :
-            KotlinFunction.ImplBase<THIS, PARENT, CALLBACK>(name, parent, callback),
+            KotlinFunction.ImplBase<THIS, PARENT, CALLBACK>(signature, parent, callback),
             BuilderBase<THIS, PARENT>,
             KotlinExtensionFunction
     {
-        override fun writeTo(writer: Writer, indent: String)
-        {
-            writer.write("${indent}fun ${onType.asDeclaration()}.$name")
-            writeFunctionArguments(writer, "$indent    ")
-            writer.write("${indent} {\n")
-            writeFunctionBody(writer, "$indent  ")
-            writer.write("${indent}}\n")
-        }
     }
 }

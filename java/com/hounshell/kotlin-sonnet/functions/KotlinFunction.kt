@@ -10,12 +10,8 @@ import java.io.Writer
 
 interface KotlinFunction : CodeWriter
 {
-    interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>
+    interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>: KotlinFunctionSignature.BuilderBase<THIS>
     {
-        val name: String
-
-        fun addParameter(variable: VariableDeclaration): THIS
-
         fun startFunctionBody(): KotlinBlock.Builder<PARENT>
 
         fun skip(): PARENT
@@ -28,11 +24,11 @@ interface KotlinFunction : CodeWriter
         name: String,
         parent: PARENT,
         callback: (KotlinFunction) -> Unit
-    ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunction>(name, parent, callback)
+    ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunction>(KotlinFunctionSignature.Impl(name), parent, callback)
     {}
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinFunction>(
-        override val name: String,
+        private val signature: KotlinFunctionSignature.Builder,
         parent: PARENT,
         callback: (CALLBACK) -> Unit
     ) :
@@ -40,14 +36,12 @@ interface KotlinFunction : CodeWriter
         BuilderBase<THIS, PARENT>,
             KotlinFunction
     {
-        private val parameters: MutableList<VariableDeclaration> = mutableListOf()
-
         private lateinit var body: KotlinBlock
 
         override fun addParameter(variable: VariableDeclaration): THIS
         {
             assertNotClosed()
-            parameters.add(variable)
+            signature.addParameter(variable)
             return this as THIS
         }
 
@@ -64,8 +58,7 @@ interface KotlinFunction : CodeWriter
 
         override fun writeTo(writer: Writer, indent: String)
         {
-            writer.write("${indent}fun $name")
-            writeFunctionArguments(writer, "$indent    ")
+            signature.close().writeTo(writer, indent)
             writer.write("${indent}{\n")
             writeFunctionBody(writer, "$indent  ")
             writer.write("${indent}}\n")
@@ -80,5 +73,3 @@ interface KotlinFunction : CodeWriter
         }
     }
 }
-
-interface VariableDeclaration {}

@@ -16,22 +16,16 @@ interface KotlinExtensionFunctionWithReturn : KotlinExtensionFunction
     class Impl<P>(
         onType: TypeReference,
         name: String,
-        val returnType: TypeReference,
+        returnType: TypeReference,
         parent: P,
         callback: (KotlinExtensionFunctionWithReturn) -> Unit
     ) :
-        KotlinExtensionFunction.ImplBase<Builder<P>, P, KotlinExtensionFunctionWithReturn>(onType, name, parent, callback),
+        KotlinExtensionFunction.ImplBase<Builder<P>, P, KotlinExtensionFunctionWithReturn>(
+                KotlinFunctionSignature.Impl(name, returnType, onType),
+                parent,
+                callback),
         Builder<P>,
-            KotlinExtensionFunctionWithReturn
+        KotlinExtensionFunctionWithReturn
     {
-        override fun writeTo(writer: Writer, indent: String)
-        {
-            writer.write("${indent}fun ${onType.asDeclaration()}.$name")
-            writeFunctionArguments(writer, "$indent    ")
-            writer.write(": ${returnType.asDeclaration()} ")
-            writer.write("${indent}{\n")
-            writeFunctionBody(writer, "$indent  ")
-            writer.write("${indent}}\n")
-        }
     }
 }
