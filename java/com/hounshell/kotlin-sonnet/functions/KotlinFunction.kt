@@ -5,16 +5,17 @@ package com.hounshell.kotlin_sonnet.functions
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
+import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 import com.hounshell.kotlin_sonnet.types.TypeReference
 import java.io.Writer
 
 interface KotlinFunction : CodeWriter
 {
-    interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>: KotlinFunctionSignature.BuilderBase<THIS>
+    interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>:
+        KotlinFunctionSignature.BuilderBase<THIS>,
+            KotlinBlock.BuilderBase<THIS>
     {
-        fun startFunctionBody(): KotlinBlock.Builder<PARENT>
-
-        fun skip(): PARENT
+        fun endFunction(): PARENT
     }
 
     interface Builder<P> : KotlinFunction.BuilderBase<Builder<P>, P>
@@ -36,7 +37,7 @@ interface KotlinFunction : CodeWriter
         BuilderBase<THIS, PARENT>,
             KotlinFunction
     {
-        private lateinit var body: KotlinBlock
+        private val body = KotlinBlock.impl()
 
         override fun addParameter(variable: VariableDeclaration): THIS
         {
@@ -45,31 +46,24 @@ interface KotlinFunction : CodeWriter
             return this as THIS
         }
 
-        override fun startFunctionBody(): KotlinBlock.Builder<PARENT>
+        override fun addStatement(statement: KotlinStatement): THIS
         {
-            TODO("Not yet implemented")
+            assertNotClosed()
+            body.addStatement(statement)
+            return this as THIS
         }
 
-        override fun skip(): PARENT
+        override fun endFunction(): PARENT
         {
-            // TODO: Remove this.
             return close();
         }
 
         override fun writeTo(writer: Writer, indent: String)
         {
-            signature.close().writeTo(writer, indent)
+            signature.writeTo(writer, indent)
             writer.write("${indent}{\n")
-            writeFunctionBody(writer, "$indent  ")
+            body.writeTo(writer, "$indent  ")
             writer.write("${indent}}\n")
-        }
-
-        protected fun writeFunctionArguments(writer: Writer, indent: String) {
-            writer.write("(/* TODO: KotlinFunction arguments not implemented yet. */)")
-        }
-
-        protected fun writeFunctionBody(writer: Writer, indent: String) {
-            writer.write("${indent}// TODO: KotlinFunction body not implemented yet.\n")
         }
     }
 }

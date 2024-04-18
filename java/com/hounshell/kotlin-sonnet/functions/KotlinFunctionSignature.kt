@@ -1,5 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
+import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
@@ -14,11 +15,8 @@ interface KotlinFunctionSignature {
         fun addParameter(variable: VariableDeclaration): THIS
     }
 
-    interface Builder : BuilderBase<Builder>
-    {
-        fun close(): KotlinFunctionSignature
-
-    }
+    interface Builder : BuilderBase<Builder>, CodeWriter
+    {}
 
     class Impl(
         val name: String,
@@ -50,8 +48,6 @@ interface KotlinFunctionSignature {
                 writer.write(": ${returnType.asDeclaration()}")
             }
         }
-
-        override fun close() = this
     }
 }
 

@@ -3,7 +3,7 @@ package com.hounshell.kotlin_sonnet.kotlin
 import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.KotlinFiles
 import com.hounshell.kotlin_sonnet.types.RealTypeReference
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.expressions.literal
 
 import org.junit.Test
 import java.io.StringWriter
@@ -15,9 +15,11 @@ class ExtensionFunctionTests {
         val file = parent
             .addKotlinFile("foo.kt")
             .addExtensionFunction(RealTypeReference(String::class.java), "print")
-            .skip()
+            .endFunction()
             .addExtensionFunction(RealTypeReference(String::class.java), "printAndReturn", RealTypeReference(String::class.java))
-            .skip()
+            .addStatement(literal(true))
+            .addStatement(literal(7F))
+            .endFunction()
             .endFile()
             .getFileByPath("foo.kt")!!
 
