@@ -1,21 +1,18 @@
 package com.hounshell.kotlin_sonnet
 
+import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
 import java.util.Collections
 
 class KotlinFiles():
-    BaseKotlinBlock<KotlinFiles, Void?, Pair<String, KotlinFile>>(null, null),
-    KotlinFile.Parent
+    BaseKotlinBlock<KotlinFiles, Void?>(null, null)
 {
-    fun getFileByPath(path: String) = getMembers()
-        .filter { (filePath, _) -> path.equals(filePath) }
-        .map { (_, file ) -> file }
-        .firstOrNull()
+    private val files: MutableMap<String, KotlinFile> = mutableMapOf()
 
-    fun getFilesByPath(): Map<String, KotlinFile> = getMembers().associate({ it })
+    fun getFileByPath(path: String) = files.get(path)
 
-    fun getFiles(): List<Pair<String, KotlinFile>> = Collections.unmodifiableList(getMembers())
+    fun getFilesByPath(): Map<String, KotlinFile> = Collections.unmodifiableMap(files)
 
     fun addKotlinFile(path: String): KotlinFile.Builder<KotlinFiles> {
-        return KotlinFile.Impl(this) { file -> addMember(path to file) }
+        return KotlinFile.Impl(this) { file -> files[path] = file }
     }
 }

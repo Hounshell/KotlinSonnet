@@ -4,7 +4,8 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.hounshell.kotlin_sonnet.KotlinFile;
 import com.hounshell.kotlin_sonnet.KotlinFiles;
-import com.hounshell.kotlin_sonnet.TypeReference;
+import com.hounshell.kotlin_sonnet.types.RealTypeReference;
+import com.hounshell.kotlin_sonnet.types.TypeReference;
 
 import org.junit.Test;
 import java.io.StringWriter;
@@ -23,7 +24,7 @@ public class KotlinFileTests {
         KotlinFiles parent = new KotlinFiles();
         parent
             .addKotlinFile("foo.kt")
-            .addImport(new TypeReference(String.class))
+            .addImport(new RealTypeReference( String.class))
             .endFile();
     }
 
@@ -39,7 +40,7 @@ public class KotlinFileTests {
         StringWriter writer = new StringWriter();
         file.writeTo(writer);
 
-        assertThat(writer.toString()).isEqualTo("package foo.bar\n\n");
+        assertThat(writer.toString()).isEqualTo("package foo.bar\n");
     }
 
     @Test

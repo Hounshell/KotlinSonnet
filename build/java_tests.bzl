@@ -23,7 +23,7 @@ def all_kt_tests(name, package=None, srcs=[], deps=[], **kwargs):
 
     all_tests = []
     for test_src in test_files:
-        test_name = name + "_" + _to_class_name(test_src)
+        test_name = name + "." + _to_class_name(test_src)
         all_tests.append(test_name)
 
 

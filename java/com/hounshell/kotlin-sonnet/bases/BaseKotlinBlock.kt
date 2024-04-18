@@ -1,21 +1,12 @@
-package com.hounshell.kotlin_sonnet
+package com.hounshell.kotlin_sonnet.bases
 
 import java.util.Collections
 
-abstract class BaseKotlinBlock<IT, P, M>(
-    private val parent: P,
-    private val callback: ((IT) -> Unit)?) {
+abstract class BaseKotlinBlock<CALLBACK, PARENT>(
+    private val parent: PARENT,
+    private val callback: ((CALLBACK) -> Unit)?) {
 
     var closed = false
-
-    private val members: MutableList<M> = mutableListOf()
-
-    protected fun getMembers(): List<M> = Collections.unmodifiableList(members)
-
-    protected fun addMember(member: M) {
-        assertNotClosed()
-        members.add(member)
-    }
 
     protected fun assertClosed() {
         if (!closed) {
@@ -29,12 +20,12 @@ abstract class BaseKotlinBlock<IT, P, M>(
         }
     }
 
-    protected fun close(): P {
+    protected fun close(): PARENT {
         assertNotClosed()
         closed = true
 
         @Suppress("UNCHECKED_CAST")
-        callback?.invoke(this as IT)
+        callback?.invoke(this as CALLBACK)
 
         return parent
     }

@@ -1,10 +1,13 @@
 package com.hounshell.kotlin_sonnet
 
+import com.hounshell.kotlin_sonnet.bases.BaseKotlinBlock
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
+import com.hounshell.kotlin_sonnet.types.TypeReference
 import java.io.Writer
 
-interface KotlinFile : CodeWriter {
-    interface Members {}
-    interface Parent {}
+interface KotlinFile {
+    fun writeTo(writer: Writer)
 
     interface Builder<P>
     {
@@ -12,7 +15,10 @@ interface KotlinFile : CodeWriter {
 
         fun packageName(packageName: String?): Builder<P>
 
-        fun addImport(typeReference: TypeReference): Builder<P>
+        fun addImport(type: TypeReference): Builder<P>
+
+        fun addExtensionFunction(onType: TypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>>
+        fun addExtensionFunction(onType: TypeReference, name: String, returnType: TypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>>
 
         // TODO: Support more contents of a file.
 
@@ -20,10 +26,13 @@ interface KotlinFile : CodeWriter {
     }
 
     class Impl<P>(parent: P, callback: (KotlinFile) -> Unit):
-        BaseKotlinBlock<KotlinFile, P, Members>(parent, callback),
+        BaseKotlinBlock<KotlinFile, P>(parent, callback),
         Builder<P>,
         KotlinFile
     {
+        private val classImports: MutableList<KotlinClassImport> = mutableListOf()
+        private val extensionFunctions: MutableList<KotlinExtensionFunction> = mutableListOf()
+
         override var packageName: String? = null
             get() = field
             set(value) {
@@ -36,23 +45,52 @@ interface KotlinFile : CodeWriter {
             return this
         }
 
-        override fun addImport(typeReference: TypeReference): Builder<P> {
-            addMember(Import(typeReference))
+        override fun addImport(type: TypeReference): Builder<P> {
+            classImports.add(KotlinClassImport(type))
             return this
         }
 
-        // TODO: Support more contents of a file.
+        override fun addExtensionFunction(onType: TypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>> {
+            return KotlinExtensionFunction.Impl(onType, name, this) { f -> extensionFunctions.add(f) }
+        }
+
+        override fun addExtensionFunction(onType: TypeReference, name: String, returnType: TypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>> {
+            return KotlinExtensionFunctionWithReturn.Impl(onType, name, returnType, this) { f -> extensionFunctions.add(f) }
+        }
+
+        // TODO: Classes, Interfaces, Enums, Static imports, ...?
 
         override fun endFile(): P = close()
 
         override fun writeTo(writer: Writer) {
             assertClosed()
             if (packageName != null) {
-                writer.write("package $packageName\n\n")
+                writer.write("package $packageName\n")
             }
+
+            writeSection(writer, classImports, false)
+            writeSection(writer, extensionFunctions)
+
             // TODO: Support more contents of a file.
         }
 
-        private class Import(val typeReference: TypeReference): Members {}
+        private fun writeSection(writer: Writer, members: List<out CodeWriter>, spaceBetween: Boolean = true) {
+            var first = true;
+            for (member in members) {
+                if (first || spaceBetween) {
+                    first = false
+                    writer.write("\n")
+                }
+
+                member.writeTo(writer, "");
+            }
+        }
+
+        private class KotlinClassImport(val type: TypeReference): CodeWriter {
+            override fun writeTo(writer: Writer, indent: String)
+            {
+                writer.write("${indent}import ${type.asName()}\n")
+            }
+        }
     }
 }
