@@ -1,5 +1,6 @@
-package com.hounshell.kotlin_sonnet
+package com.hounshell.kotlin_sonnet.files
 
+import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
@@ -45,12 +46,14 @@ interface KotlinFile {
                 field = value
             }
 
-        override fun packageName(packageName: String?): Builder<P> {
+        override fun packageName(packageName: String?): Builder<P>
+        {
             this.packageName = packageName
             return this
         }
 
-        override fun addImport(type: KotlinTypeReference): Builder<P> {
+        override fun addImport(type: KotlinTypeReference): Builder<P>
+        {
             classImports.add(KotlinClassImport(type))
             return this
         }
@@ -91,7 +94,8 @@ interface KotlinFile {
             }
         }
 
-        private class KotlinClassImport(val type: KotlinTypeReference): CodeWriter {
+        private class KotlinClassImport(val type: KotlinTypeReference): CodeWriter
+        {
             override fun writeTo(writer: Writer, indent: String)
             {
                 writer.write("${indent}import ${type.asName()}\n")

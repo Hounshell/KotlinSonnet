@@ -1,4 +1,4 @@
-package com.hounshell.kotlin_sonnet
+package com.hounshell.kotlin_sonnet.files
 
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import java.util.Collections
@@ -12,7 +12,8 @@ class KotlinFiles():
 
     fun getFilesByPath(): Map<String, KotlinFile> = Collections.unmodifiableMap(files)
 
-    fun addKotlinFile(path: String): KotlinFile.Builder<KotlinFiles> {
+    fun addKotlinFile(path: String): KotlinFile.Builder<KotlinFiles>
+    {
         return KotlinFile.Impl(this) { file -> files[path] = file }
     }
 }
