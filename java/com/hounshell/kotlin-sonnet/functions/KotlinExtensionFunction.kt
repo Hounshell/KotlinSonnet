@@ -2,7 +2,7 @@ package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.KotlinFile
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
 interface KotlinExtensionFunction : KotlinFunction
@@ -16,7 +16,7 @@ interface KotlinExtensionFunction : KotlinFunction
     {}
 
     class Impl<PARENT>(
-            onType: TypeReference,
+            onType: KotlinTypeReference,
             name: String,
             parent: PARENT,
             callback: (KotlinExtensionFunction) -> Unit

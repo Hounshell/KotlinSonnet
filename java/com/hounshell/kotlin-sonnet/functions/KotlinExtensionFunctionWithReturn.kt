@@ -1,9 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.KotlinFile
-import com.hounshell.kotlin_sonnet.types.TypeReference
-import java.io.Writer
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 interface KotlinExtensionFunctionWithReturn : KotlinExtensionFunction
 {
@@ -13,9 +10,9 @@ interface KotlinExtensionFunctionWithReturn : KotlinExtensionFunction
     {}
 
     class Impl<P>(
-        onType: TypeReference,
+        onType: KotlinTypeReference,
         name: String,
-        returnType: TypeReference,
+        returnType: KotlinTypeReference,
         parent: P,
         callback: (KotlinExtensionFunctionWithReturn) -> Unit
     ) :

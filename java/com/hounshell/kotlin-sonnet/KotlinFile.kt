@@ -3,7 +3,7 @@ package com.hounshell.kotlin_sonnet
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
 interface KotlinFile {
@@ -15,10 +15,10 @@ interface KotlinFile {
 
         fun packageName(packageName: String?): Builder<P>
 
-        fun addImport(type: TypeReference): Builder<P>
+        fun addImport(type: KotlinTypeReference): Builder<P>
 
-        fun addExtensionFunction(onType: TypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>>
-        fun addExtensionFunction(onType: TypeReference, name: String, returnType: TypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>>
 
         // TODO: Support more contents of a file.
 
@@ -45,16 +45,16 @@ interface KotlinFile {
             return this
         }
 
-        override fun addImport(type: TypeReference): Builder<P> {
+        override fun addImport(type: KotlinTypeReference): Builder<P> {
             classImports.add(KotlinClassImport(type))
             return this
         }
 
-        override fun addExtensionFunction(onType: TypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>> {
+        override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>> {
             return KotlinExtensionFunction.Impl(onType, name, this) { f -> extensionFunctions.add(f) }
         }
 
-        override fun addExtensionFunction(onType: TypeReference, name: String, returnType: TypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>> {
+        override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>> {
             return KotlinExtensionFunctionWithReturn.Impl(onType, name, returnType, this) { f -> extensionFunctions.add(f) }
         }
 
@@ -86,7 +86,7 @@ interface KotlinFile {
             }
         }
 
-        private class KotlinClassImport(val type: TypeReference): CodeWriter {
+        private class KotlinClassImport(val type: KotlinTypeReference): CodeWriter {
             override fun writeTo(writer: Writer, indent: String)
             {
                 writer.write("${indent}import ${type.asName()}\n")

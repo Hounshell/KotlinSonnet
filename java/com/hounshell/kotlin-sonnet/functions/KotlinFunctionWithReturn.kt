@@ -1,6 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 interface KotlinFunctionWithReturn : KotlinFunction
 {
@@ -14,7 +14,7 @@ interface KotlinFunctionWithReturn : KotlinFunction
 
     class Impl<PARENT>(
             name: String,
-            returnType: TypeReference,
+            returnType: KotlinTypeReference,
             parent: PARENT,
             callback: (KotlinFunctionWithReturn) -> Unit
     ) : ImplBase<Impl<PARENT>, PARENT, KotlinFunctionWithReturn>(

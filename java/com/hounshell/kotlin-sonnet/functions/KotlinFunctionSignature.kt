@@ -1,7 +1,7 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
 interface KotlinFunctionSignature {
@@ -17,8 +17,8 @@ interface KotlinFunctionSignature {
 
     class Impl(
         val name: String,
-        val returnType: TypeReference? = null,
-        val onType: TypeReference? = null
+        val returnType: KotlinTypeReference? = null,
+        val onType: KotlinTypeReference? = null
     ):
         Builder,
         KotlinFunctionSignature

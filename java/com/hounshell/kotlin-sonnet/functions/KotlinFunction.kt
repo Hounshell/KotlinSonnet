@@ -6,7 +6,6 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
-import com.hounshell.kotlin_sonnet.types.TypeReference
 import java.io.Writer
 
 interface KotlinFunction : CodeWriter

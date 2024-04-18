@@ -2,8 +2,7 @@ package com.hounshell.kotlin_sonnet.kotlin
 
 import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.KotlinFiles
-import com.hounshell.kotlin_sonnet.types.RealTypeReference
-import com.hounshell.kotlin_sonnet.types.TypeReference
+import com.hounshell.kotlin_sonnet.types.type
 
 import org.junit.Test
 import java.io.StringWriter
@@ -22,7 +21,7 @@ class KotlinFileTests {
         val parent = KotlinFiles()
         parent
             .addKotlinFile("foo.kt")
-            .addImport(RealTypeReference(String::class.java))
+            .addImport(type(String::class.java))
             .endFile()
     }
 
@@ -32,8 +31,8 @@ class KotlinFileTests {
         val file = parent
             .addKotlinFile("foo.kt")
             .packageName("foo.bar")
-            .addImport(RealTypeReference(ArrayList::class.java))
-            .addImport(RealTypeReference(HashMap::class.java))
+            .addImport(type(ArrayList::class.java))
+            .addImport(type(HashMap::class.java))
             .endFile()
             .getFileByPath("foo.kt")!!
 

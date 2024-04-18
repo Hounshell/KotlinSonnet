@@ -4,8 +4,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.hounshell.kotlin_sonnet.KotlinFile;
 import com.hounshell.kotlin_sonnet.KotlinFiles;
-import com.hounshell.kotlin_sonnet.types.RealTypeReference;
-import com.hounshell.kotlin_sonnet.types.TypeReference;
+import com.hounshell.kotlin_sonnet.types.KotlinRealTypeReference;
 
 import org.junit.Test;
 import java.io.StringWriter;
@@ -24,7 +23,7 @@ public class KotlinFileTests {
         KotlinFiles parent = new KotlinFiles();
         parent
             .addKotlinFile("foo.kt")
-            .addImport(new RealTypeReference( String.class))
+            .addImport(new KotlinRealTypeReference( String.class))
             .endFile();
     }
 
