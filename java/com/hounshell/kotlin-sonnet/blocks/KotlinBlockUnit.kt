@@ -1,7 +1,6 @@
 package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.ResultAndBuilder
-import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinReturnStatement
 
 interface KotlinBlockUnit : KotlinBlock

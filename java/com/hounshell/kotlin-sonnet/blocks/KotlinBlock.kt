@@ -5,7 +5,6 @@ package com.hounshell.kotlin_sonnet.blocks
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
-import java.io.Writer
 
 interface KotlinBlock
 {

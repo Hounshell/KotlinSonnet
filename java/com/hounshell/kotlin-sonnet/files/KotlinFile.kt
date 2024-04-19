@@ -5,7 +5,6 @@ import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionReturn
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionUnit
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
-import java.io.Writer
 
 interface KotlinFile {
     fun writeTo(writer: CodeWriter)

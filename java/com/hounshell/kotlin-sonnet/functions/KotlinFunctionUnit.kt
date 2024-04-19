@@ -3,7 +3,6 @@ package com.hounshell.kotlin_sonnet.functions
 import com.hounshell.kotlin_sonnet.ResultAndBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlockUnit
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
-import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 interface KotlinFunctionUnit : KotlinFunction
 {

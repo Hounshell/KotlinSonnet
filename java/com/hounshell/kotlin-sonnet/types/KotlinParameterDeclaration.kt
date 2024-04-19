@@ -1,7 +1,6 @@
 package com.hounshell.kotlin_sonnet.types
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import java.io.Writer
 
 class KotlinParameterDeclaration(
     val name: String,
