@@ -2,7 +2,9 @@ package com.hounshell.kotlin_sonnet.types
 
 class KotlinRealTypeReference(val canonicalName: String, override val isNullable: Boolean = false) : KotlinTypeReference
 {
-    constructor(javaClass: Class<*>, isNullable: Boolean = false): this(javaClass.canonicalName!!, isNullable)
+    constructor(javaClass: Class<*>, isNullable: Boolean = false): this(
+        javaClass.canonicalName,
+        isNullable)
 
     private val baseName = canonicalName
         .splitToSequence('$')
@@ -36,7 +38,6 @@ class KotlinRealTypeReference(val canonicalName: String, override val isNullable
             }
         }
 
-
     override fun asDeclaration(): String
     {
         return if (isNullable) {
@@ -47,7 +48,9 @@ class KotlinRealTypeReference(val canonicalName: String, override val isNullable
     }
 
     override fun asName(): String {
-        return if (packageName == "java.lang") {
+        return if (canonicalName == "int") {
+            "Int"
+        } else if (packageName == "java.lang") {
             localName
         } else {
             canonicalName

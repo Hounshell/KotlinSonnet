@@ -3,18 +3,15 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
-import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
-import com.hounshell.kotlin_sonnet.types.KotlinVariableDeclaration
 import java.io.Writer
 
 interface KotlinFunction : CodeWriter
 {
     interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>:
         KotlinFunctionSignature.BuilderBase<THIS>,
-            KotlinBlock.BuilderBase<THIS>
+        KotlinBlock.BuilderBase<THIS>
     {
 
         fun define(work: BuilderBase<THIS, PARENT>.() -> Unit): PARENT {
@@ -25,60 +22,24 @@ interface KotlinFunction : CodeWriter
         fun endFunction(): PARENT
     }
 
-    interface Builder<P> : KotlinFunction.BuilderBase<Builder<P>, P>
+    interface Builder<P> : BuilderBase<Builder<P>, P>
     {}
 
-    companion object
-    {
-        @JvmStatic
-        fun <PARENT> impl(
-            name: String,
-            parent: PARENT,
-            callback: (KotlinFunction) -> Unit
-        ): Builder<PARENT> = Impl(name, parent, callback)
-
-        private class Impl<PARENT>(
-            name: String,
-            parent: PARENT,
-            callback: (KotlinFunction) -> Unit
-        ) : ImplBase<Builder<PARENT>, PARENT, KotlinFunction>(
-            KotlinFunctionSignature.Impl(name),
-            parent,
-            callback
-        ),
-            Builder<PARENT>
-        {}
-    }
-
-    abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT, CALLBACK : KotlinFunction>(
+    abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT>(
         private val signature: KotlinFunctionSignature.Builder,
-        parent: PARENT,
-        callback: (CALLBACK) -> Unit
+        private val body: KotlinBlock,
+        private val parent: PARENT
     ) :
-        BaseKotlinBuilder<CALLBACK, PARENT>(parent, callback),
         BuilderBase<THIS, PARENT>,
-            KotlinFunction
+        KotlinFunction
     {
-        private val body = KotlinBlock.impl()
-
         override fun addParameter(parameter: KotlinParameterDeclaration): THIS
         {
-            assertNotClosed()
             signature.addParameter(parameter)
             return this as THIS
         }
 
-        override fun addStatement(statement: KotlinStatement): THIS
-        {
-            assertNotClosed()
-            body.addStatement(statement)
-            return this as THIS
-        }
-
-        override fun endFunction(): PARENT
-        {
-            return close();
-        }
+        override fun endFunction() = parent
 
         override fun writeTo(writer: Writer, indent: String)
         {

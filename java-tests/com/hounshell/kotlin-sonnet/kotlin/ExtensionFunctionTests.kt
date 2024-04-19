@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.files.KotlinFiles
 import com.hounshell.kotlin_sonnet.types.type
 import com.hounshell.kotlin_sonnet.expressions.literal
+import com.hounshell.kotlin_sonnet.statements.doReturn
 import com.hounshell.kotlin_sonnet.types.nullableType
 import com.hounshell.kotlin_sonnet.types.parameter
 import com.hounshell.kotlin_sonnet.types.variable
@@ -25,13 +26,14 @@ class ExtensionFunctionTests {
                     addParameter(parameter(paramMaxLength, nullableType(Int::class.java)))
 
                     addStatement(literal(false))
-                    addStatement(literal("7"))
+                    addStatement(literal(7L))
+                    addStatement(doReturn())
                 }
 
                 addExtensionFunction(type(String::class.java), "printAndReturn", type(String::class.java))
                     .addStatement(literal(true))
                     .addStatement(literal(7F))
-                    .endFunction()
+                    .doReturn(literal("42"))
             }
             .getFileByPath("foo.kt")!!
 

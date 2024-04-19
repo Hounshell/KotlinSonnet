@@ -1,9 +1,9 @@
 package com.hounshell.kotlin_sonnet.files
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.bases.BaseKotlinBuilder
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
-import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionWithReturn
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionReturn
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionUnit
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
@@ -18,8 +18,8 @@ interface KotlinFile {
 
         fun addImport(type: KotlinTypeReference): Builder<P>
 
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>>
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<P>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<P>>
 
         // TODO: Support more contents of a file.
 
@@ -31,8 +31,7 @@ interface KotlinFile {
         fun endFile(): P
     }
 
-    class Impl<P>(parent: P, callback: (KotlinFile) -> Unit):
-        BaseKotlinBuilder<KotlinFile, P>(parent, callback),
+    class Impl<P>(private val parent: P):
         Builder<P>,
         KotlinFile
     {
@@ -42,7 +41,6 @@ interface KotlinFile {
         override var packageName: String? = null
             get() = field
             set(value) {
-                assertNotClosed()
                 field = value
             }
 
@@ -58,20 +56,23 @@ interface KotlinFile {
             return this
         }
 
-        override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunction.Builder<Builder<P>> {
-            return KotlinExtensionFunction.impl(onType, name, this) { f -> extensionFunctions.add(f) }
+        override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<P>> {
+            val function = KotlinExtensionFunctionUnit.impl(onType, name, this as Builder<P>)
+            extensionFunctions.add(function)
+            return function.asBuilder()
         }
 
-        override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionWithReturn.Builder<Builder<P>> {
-            return KotlinExtensionFunctionWithReturn.impl(onType, name, returnType, this) { f -> extensionFunctions.add(f) }
+        override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<P>> {
+            val function = KotlinExtensionFunctionReturn.impl(onType, name, returnType, this as Builder<P>)
+            extensionFunctions.add(function)
+            return function.asBuilder()
         }
 
         // TODO: Classes, Interfaces, Enums, Static imports, ...?
 
-        override fun endFile(): P = close()
+        override fun endFile(): P = parent
 
         override fun writeTo(writer: Writer) {
-            assertClosed()
             if (packageName != null) {
                 writer.write("package $packageName\n")
             }
