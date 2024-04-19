@@ -8,7 +8,7 @@ import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 import java.io.Writer
 
 interface KotlinFile {
-    fun writeTo(writer: Writer)
+    fun writeTo(writer: CodeWriter)
 
     interface Builder<P>
     {
@@ -58,48 +58,47 @@ interface KotlinFile {
 
         override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<P>> {
             val function = KotlinExtensionFunctionUnit.impl(onType, name, this as Builder<P>)
-            extensionFunctions.add(function)
-            return function.asBuilder()
+            extensionFunctions.add(function.result)
+            return function.builder
         }
 
         override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<P>> {
             val function = KotlinExtensionFunctionReturn.impl(onType, name, returnType, this as Builder<P>)
-            extensionFunctions.add(function)
-            return function.asBuilder()
+            extensionFunctions.add(function.result)
+            return function.builder
         }
 
         // TODO: Classes, Interfaces, Enums, Static imports, ...?
 
         override fun endFile(): P = parent
 
-        override fun writeTo(writer: Writer) {
+        override fun writeTo(writer: CodeWriter) {
             if (packageName != null) {
                 writer.write("package $packageName\n")
             }
 
-            writeSection(writer, classImports, false)
-            writeSection(writer, extensionFunctions)
+            if (classImports.isNotEmpty())
+            {
+                writer.write("\n")
+                for (classImport in classImports)
+                {
+                    classImport.writeTo(writer)
+                }
+            }
+
+            for (extensionFunction in extensionFunctions) {
+                writer.write("\n")
+                extensionFunction.writeTo(writer, "")
+            }
 
             // TODO: Support more contents of a file.
         }
 
-        private fun writeSection(writer: Writer, members: List<CodeWriter>, spaceBetween: Boolean = true) {
-            var first = true;
-            for (member in members) {
-                if (first || spaceBetween) {
-                    first = false
-                    writer.write("\n")
-                }
-
-                member.writeTo(writer, "");
-            }
-        }
-
-        private class KotlinClassImport(val type: KotlinTypeReference): CodeWriter
+        private class KotlinClassImport(val type: KotlinTypeReference)
         {
-            override fun writeTo(writer: Writer, indent: String)
+            fun writeTo(writer: CodeWriter)
             {
-                writer.write("${indent}import ${type.asName()}\n")
+                writer.write("import ${type.asName()}\n")
             }
         }
     }

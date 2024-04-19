@@ -7,8 +7,10 @@ import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 import java.io.Writer
 
-interface KotlinBlock : CodeWriter
+interface KotlinBlock
 {
+    fun writeTo(writer: CodeWriter, indent: String)
+
     interface BuilderBase<THIS : BuilderBase<THIS>>
     {
         fun addStatement(statement: KotlinStatement): THIS
@@ -29,7 +31,7 @@ interface KotlinBlock : CodeWriter
             return this as THIS
         }
 
-        override fun writeTo(writer: Writer, indent: String)
+        override fun writeTo(writer: CodeWriter, indent: String)
         {
             for (statement in statements) {
                 statement.writeTo(writer, indent);

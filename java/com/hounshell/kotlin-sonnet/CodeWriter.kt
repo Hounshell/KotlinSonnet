@@ -2,8 +2,9 @@ package com.hounshell.kotlin_sonnet
 
 import java.io.Writer
 
-interface CodeWriter {
-    fun writeTo(writer: Writer, indent: String)
+class CodeWriter(private val writer: Writer) {
+
+    fun write(str: String) = writer.write(str)
 }
 
 

@@ -3,12 +3,14 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.ResultAndBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
-import java.io.Writer
 
-interface KotlinFunction : CodeWriter
+interface KotlinFunction
 {
+    fun writeTo(writer: CodeWriter, indent: String)
+
     interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>:
         KotlinFunctionSignature.BuilderBase<THIS>,
         KotlinBlock.BuilderBase<THIS>
@@ -26,8 +28,8 @@ interface KotlinFunction : CodeWriter
     {}
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT>(
-        private val signature: KotlinFunctionSignature.Builder,
-        private val body: KotlinBlock,
+        private val signature: ResultAndBuilder<out KotlinFunctionSignature, out KotlinFunctionSignature.Builder>,
+        private val body: ResultAndBuilder<out KotlinBlock, out KotlinBlock.BuilderBase<*>>,
         private val parent: PARENT
     ) :
         BuilderBase<THIS, PARENT>,
@@ -35,17 +37,17 @@ interface KotlinFunction : CodeWriter
     {
         override fun addParameter(parameter: KotlinParameterDeclaration): THIS
         {
-            signature.addParameter(parameter)
+            signature.builder.addParameter(parameter)
             return this as THIS
         }
 
         override fun endFunction() = parent
 
-        override fun writeTo(writer: Writer, indent: String)
+        override fun writeTo(writer: CodeWriter, indent: String)
         {
-            signature.writeTo(writer, indent)
+            signature.result.writeTo(writer, indent)
             writer.write("${indent}{\n")
-            body.writeTo(writer, "$indent  ")
+            body.result.writeTo(writer, "$indent  ")
             writer.write("${indent}}\n")
         }
     }

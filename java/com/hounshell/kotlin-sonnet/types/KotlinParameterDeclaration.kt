@@ -7,7 +7,7 @@ class KotlinParameterDeclaration(
     val name: String,
     val type: KotlinTypeReference? = null) {
 
-    fun writeTo(writer: Writer, requireType: Boolean = true)
+    fun writeTo(writer: CodeWriter, requireType: Boolean = true)
     {
         writer.write(name)
 

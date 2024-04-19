@@ -1,10 +1,10 @@
 package com.hounshell.kotlin_sonnet.expressions
 
-import java.io.Writer
+import com.hounshell.kotlin_sonnet.CodeWriter
 
 class KotlinLiteralExpression(private val representation: String) : KotlinExpression
 {
-    override fun writeTo(writer: Writer, indent: String)
+    override fun writeTo(writer: CodeWriter, indent: String)
     {
         writer.write(representation)
     }

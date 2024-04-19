@@ -1,6 +1,7 @@
 package com.hounshell.kotlin_sonnet.kotlin
 
 import com.google.common.truth.Truth.assertThat
+import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.files.KotlinFiles
 import com.hounshell.kotlin_sonnet.types.type
 
@@ -37,7 +38,7 @@ class KotlinFileTests {
             .getFileByPath("foo.kt")!!
 
         val writer = StringWriter();
-        file.writeTo(writer)
+        file.writeTo(CodeWriter(writer))
 
         assertThat(writer.toString()).isEqualTo("package foo.bar\n\nimport java.util.ArrayList\nimport java.util.HashMap\n")
     }
@@ -51,7 +52,7 @@ class KotlinFileTests {
             .getFileByPath("foo.kt")!!
 
         val writer = StringWriter();
-        file.writeTo(writer)
+        file.writeTo(CodeWriter(writer))
 
         assertThat(writer.toString()).isEqualTo("")
     }

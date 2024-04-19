@@ -1,63 +1,81 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.ResultAndBuilder
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
-import java.io.Writer
 
 interface KotlinFunctionSignature {
-    fun writeTo(writer: Writer, indent: String)
+    fun writeTo(writer: CodeWriter, indent: String)
 
     interface BuilderBase<THIS : BuilderBase<THIS>>
     {
         fun addParameter(parameter: KotlinParameterDeclaration): THIS
     }
 
-    interface Builder : BuilderBase<Builder>, CodeWriter
+    interface Builder : BuilderBase<Builder>
     {}
 
-    class Impl(
-        val name: String,
-        val returnType: KotlinTypeReference? = null,
-        val onType: KotlinTypeReference? = null
-    ):
-        Builder,
-        KotlinFunctionSignature
+    companion object
     {
-        private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
+        @JvmStatic
+        fun impl(
+            name: String,
+            returnType: KotlinTypeReference? = null,
+            onType: KotlinTypeReference? = null
+        ): ResultAndBuilder<KotlinFunctionSignature, Builder> =
+            ResultAndBuilder(Impl(name, returnType, onType))
 
-        override fun addParameter(parameter: KotlinParameterDeclaration): Builder
+        private class Impl(
+            val name: String,
+            val returnType: KotlinTypeReference?,
+            val onType: KotlinTypeReference?
+        ) :
+            Builder,
+            KotlinFunctionSignature
         {
-            parameters.add(parameter)
-            return this
-        }
+            private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
 
-        override fun writeTo(writer: Writer, indent: String)
-        {
-            if (onType != null) {
-                writer.write("${indent}fun ${onType.asDeclaration()}.$name")
-            } else {
-                writer.write("${indent}fun $name")
-            }
-
-            if (parameters.isEmpty())
+            override fun addParameter(parameter: KotlinParameterDeclaration): Builder
             {
-                writer.write("()")
-            } else {
-                writer.write("(\n$indent    ")
-                parameters.first().writeTo(writer, true)
+                parameters.add(parameter)
+                return this
+            }
 
-                for (parameter in parameters.drop(1)) {
-                    writer.write(",\n$indent    ")
-                    parameter.writeTo(writer, true)
+            override fun writeTo(writer: CodeWriter, indent: String)
+            {
+                if (onType != null)
+                {
+                    writer.write("${indent}fun ${onType.asDeclaration()}.$name")
                 }
-                writer.write("\n$indent)")
-            }
+                else
+                {
+                    writer.write("${indent}fun $name")
+                }
 
-            if (returnType != null) {
-                writer.write(": ${returnType.asDeclaration()}")
+                if (parameters.isEmpty())
+                {
+                    writer.write("()")
+                }
+                else
+                {
+                    writer.write("(\n$indent    ")
+                    parameters.first().writeTo(writer, true)
+
+                    for (parameter in parameters.drop(1))
+                    {
+                        writer.write(",\n$indent    ")
+                        parameter.writeTo(writer, true)
+                    }
+                    writer.write("\n$indent)")
+                }
+
+                if (returnType != null)
+                {
+                    writer.write(": ${returnType.asDeclaration()}")
+                }
+                writer.write(" ")
             }
-            writer.write(" ")
         }
     }
 }

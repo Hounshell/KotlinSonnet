@@ -1,6 +1,7 @@
 package com.hounshell.kotlin_sonnet.kotlin
 
 import com.google.common.truth.Truth.assertThat
+import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.files.KotlinFiles
 import com.hounshell.kotlin_sonnet.types.type
 import com.hounshell.kotlin_sonnet.expressions.literal
@@ -38,7 +39,7 @@ class ExtensionFunctionTests {
             .getFileByPath("foo.kt")!!
 
         val writer = StringWriter();
-        file.writeTo(writer)
+        file.writeTo(CodeWriter(writer))
 
         assertThat(writer.toString()).isEqualTo("")
     }
