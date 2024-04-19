@@ -6,91 +6,93 @@ import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionReturn
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionUnit
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
-interface KotlinFile {
-    fun writeTo(writer: CodeWriter)
-
-    interface Builder<P>
+abstract class KotlinFile
+{
+    interface Writer
     {
-        var packageName: String?
+        fun writeTo(writer: CodeWriter)
+    }
 
-        fun packageName(packageName: String?): Builder<P>
+    interface Builder<PARENT>
+    {
+        fun packageName(packageName: String?): Builder<PARENT>
 
-        fun addImport(type: KotlinTypeReference): Builder<P>
+        fun addImport(type: KotlinTypeReference): Builder<PARENT>
 
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<P>>
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<P>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<PARENT>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<PARENT>>
 
         // TODO: Support more contents of a file.
 
-        fun define(work: Builder<P>.() -> Unit): P {
+        fun define(work: Builder<PARENT>.() -> Unit): PARENT {
             apply(work)
             return endFile()
         }
 
-        fun endFile(): P
+        fun endFile(): PARENT
     }
 
-    class Impl<P>(private val parent: P):
-        Builder<P>,
-        KotlinFile
-    {
-        private val classImports: MutableList<KotlinClassImport> = mutableListOf()
-        private val extensionFunctions: MutableList<KotlinExtensionFunction> = mutableListOf()
+    interface BuilderAndWriter<PARENT>:
+        Builder<PARENT>,
+        Writer
 
-        override var packageName: String? = null
-            get() = field
-            set(value) {
-                field = value
-            }
+    companion object {
+        fun <PARENT> impl(parent: PARENT): BuilderAndWriter<PARENT> = Impl(parent)
 
-        override fun packageName(packageName: String?): Builder<P>
-        {
-            this.packageName = packageName
-            return this
-        }
+        private class Impl<PARENT>(private val parent: PARENT) : BuilderAndWriter<PARENT> {
+            private var packageName: String? = null
+            private val classImports: MutableList<KotlinClassImport> = mutableListOf()
+            private val extensionFunctions: MutableList<KotlinExtensionFunction> = mutableListOf()
 
-        override fun addImport(type: KotlinTypeReference): Builder<P>
-        {
-            classImports.add(KotlinClassImport(type))
-            return this
-        }
-
-        override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<P>> {
-            val function = KotlinExtensionFunctionUnit.impl(onType, name, this as Builder<P>)
-            extensionFunctions.add(function.result)
-            return function.builder
-        }
-
-        override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<P>> {
-            val function = KotlinExtensionFunctionReturn.impl(onType, name, returnType, this as Builder<P>)
-            extensionFunctions.add(function.result)
-            return function.builder
-        }
-
-        // TODO: Classes, Interfaces, Enums, Static imports, ...?
-
-        override fun endFile(): P = parent
-
-        override fun writeTo(writer: CodeWriter) {
-            if (packageName != null) {
-                writer.write("package $packageName\n")
-            }
-
-            if (classImports.isNotEmpty())
+            override fun packageName(packageName: String?): Builder<PARENT>
             {
-                writer.write("\n")
-                for (classImport in classImports)
-                {
-                    classImport.writeTo(writer)
+                this.packageName = packageName
+                return this
+            }
+
+            override fun addImport(type: KotlinTypeReference): Builder<PARENT>
+            {
+                classImports.add(KotlinClassImport(type))
+                return this
+            }
+
+            override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionUnit.impl(onType, name, this as Builder<PARENT>)
+                extensionFunctions.add(function.result)
+                return function.builder
+            }
+
+            override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionReturn.impl(onType, name, returnType, this as Builder<PARENT>)
+                extensionFunctions.add(function.result)
+                return function.builder
+            }
+
+            // TODO: Classes, Interfaces, Enums, Static imports, ...?
+
+            override fun endFile() = parent
+
+            override fun writeTo(writer: CodeWriter) {
+                if (packageName != null) {
+                    writer.write("package $packageName\n")
                 }
-            }
 
-            for (extensionFunction in extensionFunctions) {
-                writer.write("\n")
-                extensionFunction.writeTo(writer, "")
-            }
+                if (classImports.isNotEmpty())
+                {
+                    writer.write("\n")
+                    for (classImport in classImports)
+                    {
+                        classImport.writeTo(writer)
+                    }
+                }
 
-            // TODO: Support more contents of a file.
+                for (extensionFunction in extensionFunctions) {
+                    writer.write("\n")
+                    extensionFunction.writeTo(writer, "")
+                }
+
+                // TODO: Support more contents of a file.
+            }
         }
 
         private class KotlinClassImport(val type: KotlinTypeReference)
