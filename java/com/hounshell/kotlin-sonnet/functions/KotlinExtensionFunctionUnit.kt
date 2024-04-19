@@ -32,7 +32,7 @@ interface KotlinExtensionFunctionUnit<PARENT> : KotlinExtensionFunction {
             private val parent: PARENT
         ) :
             KotlinFunction.ImplBase<Builder<PARENT>, PARENT>(
-                KotlinFunctionSignature.impl(name, onType = onType),
+                KotlinSignature.impl(name, onType = onType),
                 body,
                 parent),
             Builder<PARENT>,

@@ -34,7 +34,7 @@ interface KotlinFunctionReturn : KotlinFunction
             parent: PARENT
         ) :
             KotlinFunction.ImplBase<Builder<PARENT>, PARENT>(
-                KotlinFunctionSignature.impl(name, returnType),
+                KotlinSignature.impl(name, returnType),
                 body,
                 parent
             ),

@@ -30,7 +30,7 @@ interface KotlinFunctionUnit : KotlinFunction
             parent: PARENT
         ) :
             KotlinFunction.ImplBase<Builder<PARENT>, PARENT>(
-                KotlinFunctionSignature.impl(name),
+                KotlinSignature.impl(name),
                 body,
                 parent
             ),

@@ -37,7 +37,7 @@ interface KotlinExtensionFunctionReturn<PARENT> : KotlinExtensionFunction {
             private val parent: PARENT
         ) :
             KotlinFunction.ImplBase<Builder<PARENT>, PARENT>(
-                KotlinFunctionSignature.impl(name, returnType, onType),
+                KotlinSignature.impl(name, returnType, onType),
                 body,
                 parent),
             Builder<PARENT>,

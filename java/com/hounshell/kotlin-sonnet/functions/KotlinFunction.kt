@@ -12,7 +12,7 @@ interface KotlinFunction
     fun writeTo(writer: CodeWriter, indent: String)
 
     interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>:
-        KotlinFunctionSignature.BuilderBase<THIS>,
+        KotlinSignature.Builder,
         KotlinBlock.BuilderBase<THIS>
     {
 
@@ -28,7 +28,7 @@ interface KotlinFunction
     {}
 
     abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT>(
-        private val signature: ResultAndBuilder<out KotlinFunctionSignature, out KotlinFunctionSignature.Builder>,
+        private val signature: KotlinSignature.BuilderAndWriter,
         private val body: ResultAndBuilder<out KotlinBlock, out KotlinBlock.BuilderBase<*>>,
         private val parent: PARENT
     ) :
@@ -37,7 +37,7 @@ interface KotlinFunction
     {
         override fun addParameter(parameter: KotlinParameterDeclaration): THIS
         {
-            signature.builder.addParameter(parameter)
+            signature.addParameter(parameter)
             return this as THIS
         }
 
@@ -45,7 +45,7 @@ interface KotlinFunction
 
         override fun writeTo(writer: CodeWriter, indent: String)
         {
-            signature.result.writeTo(writer, indent)
+            signature.writeTo(writer, indent)
             writer.write("${indent}{\n")
             body.result.writeTo(writer, "$indent  ")
             writer.write("${indent}}\n")

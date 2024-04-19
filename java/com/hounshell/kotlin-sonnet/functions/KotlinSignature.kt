@@ -1,39 +1,37 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.ResultAndBuilder
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
-interface KotlinFunctionSignature {
-    fun writeTo(writer: CodeWriter, indent: String)
-
-    interface BuilderBase<THIS : BuilderBase<THIS>>
+abstract class KotlinSignature
+{
+    interface Writer
     {
-        fun addParameter(parameter: KotlinParameterDeclaration): THIS
+        fun writeTo(writer: CodeWriter, indent: String)
     }
 
-    interface Builder : BuilderBase<Builder>
-    {}
-
-    companion object
+    interface Builder
     {
-        @JvmStatic
+        fun addParameter(parameter: KotlinParameterDeclaration): Builder
+    }
+
+    interface BuilderAndWriter:
+        Builder,
+        Writer
+
+    companion object {
         fun impl(
             name: String,
             returnType: KotlinTypeReference? = null,
             onType: KotlinTypeReference? = null
-        ): ResultAndBuilder<KotlinFunctionSignature, Builder> =
-            ResultAndBuilder(Impl(name, returnType, onType))
+        ): BuilderAndWriter = Impl(name, returnType, onType)
 
         private class Impl(
             val name: String,
             val returnType: KotlinTypeReference?,
             val onType: KotlinTypeReference?
-        ) :
-            Builder,
-            KotlinFunctionSignature
-        {
+        ) : BuilderAndWriter {
             private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
 
             override fun addParameter(parameter: KotlinParameterDeclaration): Builder
