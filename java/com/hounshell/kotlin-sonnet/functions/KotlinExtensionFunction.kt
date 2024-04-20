@@ -1,7 +1,5 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet._template.AbstractSquishie
-
 abstract class KotlinExtensionFunction: KotlinFunction()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :

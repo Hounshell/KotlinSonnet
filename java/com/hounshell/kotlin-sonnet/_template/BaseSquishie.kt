@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.hounshell.kotlin_sonnet._template
 
 import com.hounshell.kotlin_sonnet.CodeWriter

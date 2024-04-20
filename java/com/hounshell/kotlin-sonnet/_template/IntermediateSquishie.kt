@@ -7,7 +7,7 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 /**
  * This is a template file for a thing that is abstract and derives from a base interface.
  */
-abstract class AbstractSquishie: BaseSquishie()
+abstract class IntermediateSquishie: BaseSquishie()
 {
     // We don't have a Writer interface, because it's in the base class.
 
@@ -22,6 +22,17 @@ abstract class AbstractSquishie: BaseSquishie()
         BaseSquishie.BuilderAndWriter<BUILDER, PARENT>,
         Builder<BUILDER, PARENT>
 
+    // If you can't create an instance of an IntermediateSquishie, then remove this.
+    companion object {
+        fun <PARENT> impl(parent: PARENT): BuilderAndWriter<*, PARENT> = Impl(parent)
+
+        private class Impl<PARENT>(
+            parent: PARENT
+        ) :
+            BaseImpl<Impl<PARENT>, PARENT>(parent)
+    }
+
+    // This is the base implementation, provided for derived implementations.
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
         private val parent: PARENT
     ) : BuilderAndWriter<BUILDER, PARENT>

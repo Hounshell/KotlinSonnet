@@ -2,7 +2,6 @@ package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.statements.KotlinReturnStatement
 
-
 abstract class KotlinBlockForUnit : KotlinBlock()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> : KotlinBlock.Builder<BUILDER>
