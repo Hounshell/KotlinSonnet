@@ -8,4 +8,5 @@ interface KotlinExpression
 {
     fun writeTo(writer: CodeWriter, indent: String)
     fun asStatement(): KotlinStatement = KotlinExpressionStatement(this)
+    fun shouldWrapInParentheses(): Boolean = false
 }
