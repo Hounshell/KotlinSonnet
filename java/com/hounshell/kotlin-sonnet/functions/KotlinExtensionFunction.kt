@@ -1,9 +1,13 @@
 package com.hounshell.kotlin_sonnet.functions
 
-interface KotlinExtensionFunction : KotlinFunction
+import com.hounshell.kotlin_sonnet._template.AbstractSquishie
+
+abstract class KotlinExtensionFunction: KotlinFunction()
 {
-    interface Builder<PARENT> :
-        KotlinFunction.BuilderBase<Builder<PARENT>, PARENT>
-    {
-    }
+    interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
+        KotlinFunction.Builder<BUILDER, PARENT>
+
+    interface BuilderAndWriter<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
+        KotlinFunction.BuilderAndWriter<BUILDER, PARENT>,
+        Builder<BUILDER, PARENT>
 }

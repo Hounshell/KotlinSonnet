@@ -3,20 +3,16 @@
 package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.ResultAndBuilder
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 
-interface KotlinFunction
+abstract class KotlinFunction: KotlinBlock()
 {
-    fun writeTo(writer: CodeWriter, indent: String)
-
-    interface BuilderBase<THIS : BuilderBase<THIS, PARENT>, PARENT>:
-        KotlinSignature.Builder,
-        KotlinBlock.BuilderBase<THIS>
+    interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
+        KotlinBlock.Builder<BUILDER>,
+            KotlinSignature.Builder
     {
-
-        fun define(work: BuilderBase<THIS, PARENT>.() -> Unit): PARENT {
+        fun define(work: Builder<BUILDER, PARENT>.() -> Unit): PARENT {
             apply(work)
             return endFunction()
         }
@@ -24,21 +20,20 @@ interface KotlinFunction
         fun endFunction(): PARENT
     }
 
-    interface Builder<P> : BuilderBase<Builder<P>, P>
-    {}
+    interface BuilderAndWriter<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
+        KotlinBlock.BuilderAndWriter<BUILDER>,
+        Builder<BUILDER, PARENT>
 
-    abstract class ImplBase<THIS : BuilderBase<THIS, PARENT>, PARENT>(
+    protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
         private val signature: KotlinSignature.BuilderAndWriter,
-        private val body: ResultAndBuilder<out KotlinBlock, out KotlinBlock.BuilderBase<*>>,
+        private val body: KotlinBlock.BuilderAndWriter<*>,
         private val parent: PARENT
-    ) :
-        BuilderBase<THIS, PARENT>,
-        KotlinFunction
+    ) : BuilderAndWriter<BUILDER, PARENT>
     {
-        override fun addParameter(parameter: KotlinParameterDeclaration): THIS
+        override fun addParameter(parameter: KotlinParameterDeclaration): BUILDER
         {
             signature.addParameter(parameter)
-            return this as THIS
+            return this as BUILDER
         }
 
         override fun endFunction() = parent
@@ -47,8 +42,7 @@ interface KotlinFunction
         {
             signature.writeTo(writer, indent)
             writer.write("${indent}{\n")
-            body.result.writeTo(writer, "$indent  ")
+            body.writeTo(writer, "$indent  ")
             writer.write("${indent}}\n")
-        }
-    }
+        }    }
 }

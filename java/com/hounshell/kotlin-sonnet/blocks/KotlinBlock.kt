@@ -6,28 +6,34 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
-interface KotlinBlock
+
+abstract class KotlinBlock
 {
-    fun writeTo(writer: CodeWriter, indent: String)
-
-    interface BuilderBase<THIS : BuilderBase<THIS>>
+    interface Writer
     {
-        fun addStatement(statement: KotlinStatement): THIS
+        fun writeTo(writer: CodeWriter, indent: String)
+    }
 
-        fun addStatement(expression: KotlinExpression): THIS {
+    interface Builder<BUILDER: Builder<BUILDER>>
+    {
+        fun addStatement(statement: KotlinStatement): BUILDER
+
+        fun addStatement(expression: KotlinExpression): BUILDER {
             return addStatement(expression.asStatement())
         }
     }
 
-    abstract class ImplBase<THIS : BuilderBase<THIS>>() :
-        BuilderBase<THIS>,
-        KotlinBlock
+    interface BuilderAndWriter<BUILDER: Builder<BUILDER>> :
+        Builder<BUILDER>,
+        Writer
+
+    protected abstract class BaseImpl<BUILDER: Builder<BUILDER>>() : BuilderAndWriter<BUILDER>
     {
         private val statements: MutableList<KotlinStatement> = mutableListOf()
 
-        override fun addStatement(statement: KotlinStatement): THIS {
+        override fun addStatement(statement: KotlinStatement): BUILDER {
             statements.add(statement)
-            return this as THIS
+            return this as BUILDER
         }
 
         override fun writeTo(writer: CodeWriter, indent: String)

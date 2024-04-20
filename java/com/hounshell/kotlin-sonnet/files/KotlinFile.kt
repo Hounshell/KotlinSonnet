@@ -2,8 +2,8 @@ package com.hounshell.kotlin_sonnet.files
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
-import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionReturn
-import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionUnit
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForUnit
+import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForValue
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 abstract class KotlinFile
@@ -19,8 +19,8 @@ abstract class KotlinFile
 
         fun addImport(type: KotlinTypeReference): Builder<PARENT>
 
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<PARENT>>
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<PARENT>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
+        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
 
         // TODO: Support more contents of a file.
 
@@ -42,7 +42,7 @@ abstract class KotlinFile
         private class Impl<PARENT>(private val parent: PARENT) : BuilderAndWriter<PARENT> {
             private var packageName: String? = null
             private val classImports: MutableList<KotlinClassImport> = mutableListOf()
-            private val extensionFunctions: MutableList<KotlinExtensionFunction> = mutableListOf()
+            private val extensionFunctions: MutableList<KotlinExtensionFunction.BuilderAndWriter<*, *>> = mutableListOf()
 
             override fun packageName(packageName: String?): Builder<PARENT>
             {
@@ -56,16 +56,16 @@ abstract class KotlinFile
                 return this
             }
 
-            override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionUnit.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionUnit.impl(onType, name, this as Builder<PARENT>)
-                extensionFunctions.add(function.result)
-                return function.builder
+            override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionForUnit.impl(onType, name, this as Builder<PARENT>)
+                extensionFunctions.add(function)
+                return function
             }
 
-            override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionReturn.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionReturn.impl(onType, name, returnType, this as Builder<PARENT>)
-                extensionFunctions.add(function.result)
-                return function.builder
+            override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, this as Builder<PARENT>)
+                extensionFunctions.add(function)
+                return function
             }
 
             // TODO: Classes, Interfaces, Enums, Static imports, ...?
