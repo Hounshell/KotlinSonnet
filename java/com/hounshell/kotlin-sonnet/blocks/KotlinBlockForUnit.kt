@@ -18,15 +18,20 @@ abstract class KotlinBlockForUnit : KotlinBlock()
         fun <PARENT> impl(parent: PARENT): BuilderAndWriter<*, PARENT> = Impl(parent)
 
         private class Impl<PARENT>(
-            private val parent: PARENT
-        ) : KotlinBlock.BaseImpl<Impl<PARENT>>(),
+            parent: PARENT
+        ) : BaseImpl<Impl<PARENT>, PARENT>(parent),
             BuilderAndWriter<Impl<PARENT>, PARENT>
+    }
+
+    protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
+        private val parent: PARENT
+    ) : KotlinBlock.BaseImpl<BUILDER>(),
+        BuilderAndWriter<BUILDER, PARENT>
+    {
+        override fun doReturn(): PARENT
         {
-            override fun doReturn(): PARENT
-            {
-                addStatement(KotlinReturnStatement())
-                return parent
-            }
+            addStatement(KotlinReturnStatement())
+            return parent
         }
     }
 }
