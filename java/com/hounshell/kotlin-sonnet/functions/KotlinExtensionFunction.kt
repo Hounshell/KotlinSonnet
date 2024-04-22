@@ -1,6 +1,6 @@
 package com.hounshell.kotlin_sonnet.functions
 
-abstract class KotlinExtensionFunction: KotlinFunction()
+interface KotlinExtensionFunction
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinFunction.Builder<BUILDER, PARENT>

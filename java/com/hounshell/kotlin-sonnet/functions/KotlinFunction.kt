@@ -4,6 +4,7 @@ package com.hounshell.kotlin_sonnet.functions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
+import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 
 abstract class KotlinFunction: KotlinBlock()
@@ -36,6 +37,12 @@ abstract class KotlinFunction: KotlinBlock()
             return this as BUILDER
         }
 
+        override fun expression(expression: KotlinExpression): BUILDER
+        {
+            body.expression(expression)
+            return this as BUILDER
+        }
+
         override fun endFunction() = parent
 
         override fun writeTo(writer: CodeWriter, indent: String)
@@ -44,5 +51,6 @@ abstract class KotlinFunction: KotlinBlock()
             writer.write("${indent}{\n")
             body.writeTo(writer, "$indent  ")
             writer.write("${indent}}\n")
-        }    }
+        }
+    }
 }

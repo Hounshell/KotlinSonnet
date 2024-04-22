@@ -32,27 +32,27 @@ class ExtensionFunctionTests {
                     addParameter(parameter(paramSeparator, type(String::class.java)))
                     addParameter(parameter(paramMaxLength, nullableType(Int::class.java)))
 
-                    addStatement(negative(negative(literal(7))))
-                    addStatement(or(
+                    expression(negative(negative(literal(7))))
+                    expression(or(
                         literal(false),
                         and(
                             literal(false),
                             not(literal(true)),
                             literal(true))))
 
-                    addStatement(doReturn(multiply(
+                    doReturn(multiply(
                         literal(1),
                         add(
                             literal(2),
                             literal(3),
                             literal(4),
                             literal(5)),
-                        literal(6))))
+                        literal(6)))
                 }
 
                 addExtensionFunction(type(String::class.java), "printAndReturn", type(String::class.java))
-                    .addStatement(literal(true))
-                    .addStatement(literal(7F))
+                    .expression(literal(true))
+                    .expression(literal(7F))
                     .doReturn(literal("42"))
             }
             .getFileByPath("foo.kt")!!

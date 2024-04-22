@@ -1,15 +1,12 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet.blocks.KotlinBlock
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlockForUnit
-import com.hounshell.kotlin_sonnet.statements.KotlinReturnStatement
-import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
-abstract class KotlinFunctionForUnit: KotlinFunction()
+sealed class KotlinFunctionForUnit: KotlinFunctionBaseForUnit()
 {
     interface Builder<PARENT> :
         KotlinFunction.Builder<Builder<PARENT>, PARENT>,
-        KotlinBlockForUnit.Builder<Builder<PARENT>, PARENT>
+        KotlinFunctionBaseForUnit.Builder<Builder<PARENT>, PARENT>
 
     interface BuilderAndWriter<PARENT> :
         KotlinFunction.BuilderAndWriter<Builder<PARENT>, PARENT>,
@@ -27,26 +24,13 @@ abstract class KotlinFunctionForUnit: KotlinFunction()
 
         private class Impl<PARENT>(
             name: String,
-            private val body: KotlinBlock.BuilderAndWriter<*>,
+            private val body: KotlinBlockForUnit.BuilderAndWriter<*, *>,
             private val parent: PARENT
-        ) : KotlinFunction.BaseImpl<Builder<PARENT>, PARENT>(
+        ) : KotlinFunctionBaseForUnit.BaseImpl<Builder<PARENT>, PARENT>(
             KotlinSignature.impl(name),
             body,
             parent
         ),
             BuilderAndWriter<PARENT>
-        {
-            override fun addStatement(statement: KotlinStatement): Builder<PARENT>
-            {
-                body.addStatement(statement)
-                return this
-            }
-
-            override fun doReturn(): PARENT
-            {
-                addStatement(KotlinReturnStatement())
-                return parent
-            }
-        }
     }
 }

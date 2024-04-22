@@ -4,7 +4,7 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
-abstract class KotlinSignature
+sealed class KotlinSignature
 {
     interface Writer
     {

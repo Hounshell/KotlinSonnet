@@ -4,6 +4,7 @@ package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
+import com.hounshell.kotlin_sonnet.statements.KotlinExpressionStatement
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
 
@@ -16,11 +17,7 @@ abstract class KotlinBlock
 
     interface Builder<BUILDER: Builder<BUILDER>>
     {
-        fun addStatement(statement: KotlinStatement): BUILDER
-
-        fun addStatement(expression: KotlinExpression): BUILDER {
-            return addStatement(expression.asStatement())
-        }
+        fun expression(expression: KotlinExpression): BUILDER;
     }
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER>> :
@@ -31,7 +28,11 @@ abstract class KotlinBlock
     {
         private val statements: MutableList<KotlinStatement> = mutableListOf()
 
-        override fun addStatement(statement: KotlinStatement): BUILDER {
+        override fun expression(expression: KotlinExpression): BUILDER {
+            return addStatement(KotlinExpressionStatement(expression))
+        }
+
+        protected fun addStatement(statement: KotlinStatement): BUILDER {
             statements.add(statement)
             return this as BUILDER
         }
