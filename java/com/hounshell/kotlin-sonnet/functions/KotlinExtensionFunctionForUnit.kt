@@ -26,17 +26,14 @@ sealed class KotlinExtensionFunctionForUnit:
         ): BuilderAndWriter<PARENT> = Impl(
             onType,
             name,
-            KotlinBlockForUnit.impl(parent),
             parent)
 
         private class Impl<PARENT>(
             onType: KotlinTypeReference,
             name: String,
-            body: KotlinBlockForUnit.BuilderAndWriter<*, *>,
             parent: PARENT
         ) : KotlinFunctionBaseForUnit.BaseImpl<Builder<PARENT>, PARENT>(
             KotlinSignature.impl(name, onType = onType),
-            body,
             parent
         ),
             BuilderAndWriter<PARENT>

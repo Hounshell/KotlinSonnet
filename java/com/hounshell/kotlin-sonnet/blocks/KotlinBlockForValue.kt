@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
@@ -9,6 +11,7 @@ abstract class KotlinBlockForValue : KotlinBlock()
 {
     interface Builder<BUILDER : Builder<BUILDER, PARENT>, PARENT> : KotlinBlock.Builder<BUILDER>
     {
+        fun ifBlock(condition: KotlinExpression): KotlinBlockIfForValue.Builder<BUILDER>
         fun doReturn(expression: KotlinExpression): PARENT
     }
 
@@ -31,6 +34,12 @@ abstract class KotlinBlockForValue : KotlinBlock()
     ) : KotlinBlock.BaseImpl<BUILDER>(),
         BuilderAndWriter<BUILDER, PARENT>
     {
+        override fun ifBlock(condition: KotlinExpression): KotlinBlockIfForValue.Builder<BUILDER> {
+            val child = KotlinBlockIfForValue.impl(condition, this as BUILDER)
+            addStatement(child)
+            return child
+        }
+
         override fun doReturn(expression: KotlinExpression): PARENT
         {
             addStatement(KotlinReturnValueStatement(expression))

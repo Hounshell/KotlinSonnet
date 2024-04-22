@@ -22,17 +22,14 @@ sealed class KotlinFunctionForValue: KotlinFunctionBaseForValue()
         ): BuilderAndWriter<PARENT> = Impl(
             name,
             returnType,
-            KotlinBlockForValue.impl(parent),
             parent)
 
         private class Impl<PARENT>(
             name: String,
             returnType: KotlinTypeReference,
-            body: KotlinBlockForValue.BuilderAndWriter<*, *>,
             parent: PARENT
         ) : KotlinFunctionBaseForValue.BaseImpl<Builder<PARENT>, PARENT>(
             KotlinSignature.impl(name, returnType),
-            body,
             parent
         ),
             BuilderAndWriter<PARENT>

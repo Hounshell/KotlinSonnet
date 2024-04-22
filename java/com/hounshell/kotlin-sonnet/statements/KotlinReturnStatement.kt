@@ -10,5 +10,3 @@ class KotlinReturnStatement() : KotlinStatement
         writer.write("${indent}return\n")
     }
 }
-
-fun doReturn() = KotlinReturnStatement()

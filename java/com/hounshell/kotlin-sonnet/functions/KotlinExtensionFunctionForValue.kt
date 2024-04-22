@@ -28,18 +28,15 @@ sealed class KotlinExtensionFunctionForValue:
             onType,
             name,
             returnType,
-            KotlinBlockForValue.impl(parent),
             parent)
 
         private class Impl<PARENT>(
             onType: KotlinTypeReference,
             name: String,
             returnType: KotlinTypeReference,
-            body: KotlinBlockForValue.BuilderAndWriter<*, *>,
             parent: PARENT
         ) : KotlinFunctionBaseForValue.BaseImpl<Builder<PARENT>, PARENT>(
             KotlinSignature.impl(name, returnType, onType),
-            body,
             parent
         ),
             BuilderAndWriter<PARENT>

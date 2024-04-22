@@ -2,10 +2,11 @@
 
 package com.hounshell.kotlin_sonnet.functions
 
+import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.blocks.KotlinBlockForValue
-import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
+import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 
-abstract class KotlinFunctionBaseForValue: KotlinFunction()
+abstract class KotlinFunctionBaseForValue: KotlinBlockForValue()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinBlockForValue.Builder<BUILDER, PARENT>,
@@ -17,16 +18,23 @@ abstract class KotlinFunctionBaseForValue: KotlinFunction()
         Builder<BUILDER, PARENT>
 
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
-        signature: KotlinSignature.BuilderAndWriter,
-        private val body: KotlinBlockForValue.BuilderAndWriter<*, *>,
-        private val parent: PARENT
-    ) : KotlinFunction.BaseImpl<BUILDER, PARENT>(signature, body, parent),
+        private val signature: KotlinSignature.BuilderAndWriter,
+        parent: PARENT
+    ) : KotlinBlockForValue.BaseImpl<BUILDER, PARENT>(parent),
         BuilderAndWriter<BUILDER, PARENT>
     {
-        override fun doReturn(expression: KotlinExpression): PARENT
+        override fun addParameter(parameter: KotlinParameterDeclaration): BUILDER
         {
-            body.doReturn(expression)
-            return parent
+            signature.addParameter(parameter)
+            return this as BUILDER
+        }
+
+        override fun writeTo(writer: CodeWriter, indent: String)
+        {
+            signature.writeTo(writer, indent)
+            writer.write("${indent}{\n")
+            super.writeTo(writer, "$indent  ")
+            writer.write("${indent}}\n")
         }
     }
 }

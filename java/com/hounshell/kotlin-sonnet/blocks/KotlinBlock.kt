@@ -10,11 +10,6 @@ import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
 abstract class KotlinBlock
 {
-    interface Writer
-    {
-        fun writeTo(writer: CodeWriter, indent: String)
-    }
-
     interface Builder<BUILDER: Builder<BUILDER>>
     {
         fun expression(expression: KotlinExpression): BUILDER;
@@ -22,7 +17,7 @@ abstract class KotlinBlock
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER>> :
         Builder<BUILDER>,
-        Writer
+        KotlinStatement
 
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER>>() : BuilderAndWriter<BUILDER>
     {

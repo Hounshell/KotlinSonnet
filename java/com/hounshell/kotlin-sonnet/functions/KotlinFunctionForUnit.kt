@@ -19,16 +19,13 @@ sealed class KotlinFunctionForUnit: KotlinFunctionBaseForUnit()
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             name,
-            KotlinBlockForUnit.impl(parent),
             parent)
 
         private class Impl<PARENT>(
             name: String,
-            body: KotlinBlockForUnit.BuilderAndWriter<*, *>,
             parent: PARENT
         ) : KotlinFunctionBaseForUnit.BaseImpl<Builder<PARENT>, PARENT>(
             KotlinSignature.impl(name),
-            body,
             parent
         ),
             BuilderAndWriter<PARENT>
