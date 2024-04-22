@@ -16,7 +16,7 @@ abstract class KotlinFunctionBaseForUnit: KotlinFunction()
         Builder<BUILDER, PARENT>
 
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
-        private val signature: KotlinSignature.BuilderAndWriter,
+        signature: KotlinSignature.BuilderAndWriter,
         private val body: KotlinBlockForUnit.BuilderAndWriter<*, *>,
         private val parent: PARENT
     ) : KotlinFunction.BaseImpl<BUILDER, PARENT>(signature, body, parent),
