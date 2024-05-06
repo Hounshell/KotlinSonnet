@@ -2,16 +2,16 @@ package com.hounshell.kotlin_sonnet.kotlin
 
 import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.CodeWriter
-import com.hounshell.kotlin_sonnet.expressions._this_
 import com.hounshell.kotlin_sonnet.expressions.add
 import com.hounshell.kotlin_sonnet.expressions.and
 import com.hounshell.kotlin_sonnet.expressions.literal
 import com.hounshell.kotlin_sonnet.expressions.multiply
+import com.hounshell.kotlin_sonnet.expressions.named
 import com.hounshell.kotlin_sonnet.expressions.negative
+import com.hounshell.kotlin_sonnet.expressions.new
 import com.hounshell.kotlin_sonnet.expressions.not
 import com.hounshell.kotlin_sonnet.expressions.or
 import com.hounshell.kotlin_sonnet.files.KotlinFiles
-import com.hounshell.kotlin_sonnet.statements.doReturn
 import com.hounshell.kotlin_sonnet.types.nullableType
 import com.hounshell.kotlin_sonnet.types.parameter
 import com.hounshell.kotlin_sonnet.types.type
@@ -34,10 +34,13 @@ class ExtensionFunctionTests {
 
                     _if_(literal(true)).define {
                         expression(literal(1))
-                    }.elseIf(literal(false)) {
+                    }.elseIf(not(literal(false))) {
                         expression(literal(2))
-                    }.elseIf(literal(7)) {
+                    }.elseIf(not(not(literal(7)))) {
                         expression(literal(3))
+                        expression(literal(4))
+                        _return_()
+                        expression(literal(5))
                     }._else_ {
                         expression(literal(42))
                     }
@@ -45,7 +48,7 @@ class ExtensionFunctionTests {
 
                     expression(negative(negative(literal(7))))
 
-                    doReturn(
+                    expression(
                         multiply(
                             literal(1),
                             add(
@@ -73,7 +76,10 @@ class ExtensionFunctionTests {
                         )
                     ).define {
                         expression(literal(7))
-                        doReturn(_this_)
+                        doReturn(new(
+                            type(String::class.java),
+                            add(literal(1), literal(7)),
+                            named("maxLength", literal(42))))
                     }.endIf()
 
                     .doReturn(literal("42"))

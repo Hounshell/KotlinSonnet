@@ -13,5 +13,3 @@ class KotlinReturnValueStatement(val expression: KotlinExpression) : KotlinState
         writer.write("\n")
     }
 }
-
-fun doReturn(expression: KotlinExpression) = KotlinReturnValueStatement(expression)

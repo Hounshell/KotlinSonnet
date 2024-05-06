@@ -13,6 +13,7 @@ abstract class KotlinBlockForValue : KotlinBlock()
     {
         fun _if_(condition: KotlinExpression) = ifBlock(condition)
         fun ifBlock(condition: KotlinExpression): KotlinBlockIfForValue.Builder<BUILDER>
+        fun _return_(expression: KotlinExpression) = doReturn(expression)
         fun doReturn(expression: KotlinExpression): PARENT
     }
 

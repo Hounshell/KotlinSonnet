@@ -4,7 +4,7 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.statements.KotlinExpressionStatement
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
-interface KotlinExpression
+interface KotlinExpression : KotlinFunctionArgument
 {
     companion object
     {
@@ -12,9 +12,12 @@ interface KotlinExpression
         val _super_: KotlinExpression = KotlinSimpleExpression("super")
     }
 
-    fun writeTo(writer: CodeWriter, indent: String)
     fun asStatement(): KotlinStatement = KotlinExpressionStatement(this)
     fun shouldWrapInParentheses(): Boolean = false
+}
+
+interface KotlinFunctionArgument {
+    fun writeTo(writer: CodeWriter, indent: String)
 }
 
 open class KotlinSimpleExpression(val representation: String): KotlinExpression {

@@ -14,6 +14,8 @@ open class KotlinUnaryExpression(
     }
 
     class Negative(internal val value: KotlinExpression): KotlinUnaryExpression("-", value)
+
+    class Not(internal val value: KotlinExpression): KotlinUnaryExpression("!", value)
 }
 
 fun negative(value: KotlinExpression): KotlinExpression {
@@ -24,4 +26,12 @@ fun negative(value: KotlinExpression): KotlinExpression {
     }
 }
 
-fun not(value: KotlinExpression) = KotlinUnaryExpression("!", value)
+fun not(value: KotlinExpression): KotlinExpression {
+    return if (value is KotlinUnaryExpression.Not) {
+        value.value
+    } else {
+        KotlinUnaryExpression.Not(value)
+    }
+}
+
+fun spread(value: KotlinExpression) = KotlinUnaryExpression("*", value)

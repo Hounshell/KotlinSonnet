@@ -11,7 +11,9 @@ abstract class KotlinBlockForUnit : KotlinBlock()
     {
         fun _if_(condition: KotlinExpression) = ifBlock(condition)
         fun ifBlock(condition: KotlinExpression): KotlinBlockIfForUnit.Builder<BUILDER>
+        fun _return_() = doReturn()
         fun doReturn(): PARENT
+
     }
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
