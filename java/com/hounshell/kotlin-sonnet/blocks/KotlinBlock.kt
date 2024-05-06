@@ -4,6 +4,7 @@ package com.hounshell.kotlin_sonnet.blocks
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
+import com.hounshell.kotlin_sonnet.expressions.KotlinFunctionCallExpression
 import com.hounshell.kotlin_sonnet.statements.KotlinExpressionStatement
 import com.hounshell.kotlin_sonnet.statements.KotlinStatement
 
@@ -13,6 +14,8 @@ abstract class KotlinBlock
     interface Builder<BUILDER: Builder<BUILDER>>
     {
         fun expression(expression: KotlinExpression): BUILDER;
+        fun call(functionName: String, vararg params: KotlinExpression) = expression(KotlinFunctionCallExpression(null, functionName, *params))
+        fun call(target: KotlinExpression, functionName: String, vararg params: KotlinExpression) = expression(KotlinFunctionCallExpression(target, functionName, *params))
     }
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER>> :

@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.expressions.add
 import com.hounshell.kotlin_sonnet.expressions.and
+import com.hounshell.kotlin_sonnet.expressions.callForValue
 import com.hounshell.kotlin_sonnet.expressions.literal
 import com.hounshell.kotlin_sonnet.expressions.multiply
 import com.hounshell.kotlin_sonnet.expressions.named
@@ -30,8 +31,13 @@ class ExtensionFunctionTests {
                     val paramSeparator = variable("separator")
                     val paramMaxLength = variable("maxLength")
 
-                    addParameter(parameter(paramSeparator, type(String::class.java)))
                     addParameter(parameter(paramMaxLength, nullableType(Int::class.java), literal(7)))
+                    addParameter(parameter(paramSeparator, type(String::class.java)))
+
+                    call(paramSeparator, "clear")
+                    call( "doNothing",
+                        literal(1),
+                        callForValue( "doNothing", literal(2)))
 
                     _if_(literal(true)).define {
                         expression(literal(1))

@@ -1,6 +1,8 @@
 package com.hounshell.kotlin_sonnet.types
 
-class KotlinVariableReference(val name: String) {
+import com.hounshell.kotlin_sonnet.expressions.KotlinSimpleExpression
+
+class KotlinVariableReference(val name: String) : KotlinSimpleExpression(name) {
 }
 
 fun variable(name: String) = KotlinVariableReference(name)
