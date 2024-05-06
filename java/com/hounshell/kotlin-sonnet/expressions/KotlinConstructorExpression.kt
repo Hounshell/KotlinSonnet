@@ -10,18 +10,18 @@ open class KotlinConstructorExpression(
 {
     override fun writeTo(writer: CodeWriter, indent: String)
     {
-        writer.write("${type.asName()}(")
-        var first = true;
-        for (param in params) {
-            if (first)
-            {
-                first = false;
-            } else {
+        writer.write(type.asName())
+        if (params.isEmpty()) {
+            writer.write("()")
+        } else {
+            writer.write("(")
+            params.first().writeTo(writer, indent)
+            for (param in params.drop(1)) {
                 writer.write(", ")
+                param.writeTo(writer, indent)
             }
-            param.writeTo(writer, "    $indent")
+            writer.write(")")
         }
-        writer.write(")")
     }
 }
 

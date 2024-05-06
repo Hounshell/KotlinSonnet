@@ -1,25 +1,30 @@
 package com.hounshell.kotlin_sonnet.types
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.expressions.KotlinExpression
 
 class KotlinParameterDeclaration(
     val name: String,
-    val type: KotlinTypeReference? = null) {
+    val type: KotlinTypeReference,
+    val defaultValue: KotlinExpression? = null) {
 
-    fun writeTo(writer: CodeWriter, requireType: Boolean = true)
+    fun writeTo(writer: CodeWriter, indent: String)
     {
         writer.write(name)
-
-        if (requireType && type != null) {
-            writer.write(": ${type.asDeclaration()}")
+        writer.write(": ${type.asDeclaration()}")
+        if (defaultValue != null) {
+            writer.write(" = ")
+            defaultValue.writeTo(writer, indent)
         }
     }
 }
 
 fun parameter(
     variable: KotlinVariableReference,
-    type: KotlinTypeReference? = null) = KotlinParameterDeclaration(variable.name, type)
+    type: KotlinTypeReference,
+    defaultValue: KotlinExpression? = null) = KotlinParameterDeclaration(variable.name, type, defaultValue)
 
 fun parameter(
     name: String,
-    type: KotlinTypeReference? = null) = KotlinParameterDeclaration(name, type)
+    type: KotlinTypeReference,
+    defaultValue: KotlinExpression? = null) = KotlinParameterDeclaration(name, type, defaultValue)

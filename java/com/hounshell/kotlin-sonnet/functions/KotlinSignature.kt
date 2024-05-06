@@ -57,13 +57,13 @@ sealed class KotlinSignature
                 }
                 else
                 {
-                    writer.write("(\n$indent    ")
-                    parameters.first().writeTo(writer, true)
+                    writer.write("(\n    $indent")
+                    parameters.first().writeTo(writer, "    $indent")
 
                     for (parameter in parameters.drop(1))
                     {
-                        writer.write(",\n$indent    ")
-                        parameter.writeTo(writer, true)
+                        writer.write(",\n    $indent")
+                        parameter.writeTo(writer, "    $indent")
                     }
                     writer.write("\n$indent)")
                 }

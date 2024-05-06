@@ -11,6 +11,7 @@ import com.hounshell.kotlin_sonnet.expressions.negative
 import com.hounshell.kotlin_sonnet.expressions.new
 import com.hounshell.kotlin_sonnet.expressions.not
 import com.hounshell.kotlin_sonnet.expressions.or
+import com.hounshell.kotlin_sonnet.expressions.spread
 import com.hounshell.kotlin_sonnet.files.KotlinFiles
 import com.hounshell.kotlin_sonnet.types.nullableType
 import com.hounshell.kotlin_sonnet.types.parameter
@@ -30,7 +31,7 @@ class ExtensionFunctionTests {
                     val paramMaxLength = variable("maxLength")
 
                     addParameter(parameter(paramSeparator, type(String::class.java)))
-                    addParameter(parameter(paramMaxLength, nullableType(Int::class.java)))
+                    addParameter(parameter(paramMaxLength, nullableType(Int::class.java), literal(7)))
 
                     _if_(literal(true)).define {
                         expression(literal(1))
@@ -79,6 +80,7 @@ class ExtensionFunctionTests {
                         doReturn(new(
                             type(String::class.java),
                             add(literal(1), literal(7)),
+                            spread(literal(18)),
                             named("maxLength", literal(42))))
                     }.endIf()
 
