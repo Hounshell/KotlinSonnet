@@ -9,6 +9,7 @@ abstract class KotlinBlockForUnit : KotlinBlock()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> : KotlinBlock.Builder<BUILDER>
     {
+        fun _if_(condition: KotlinExpression) = ifBlock(condition)
         fun ifBlock(condition: KotlinExpression): KotlinBlockIfForUnit.Builder<BUILDER>
         fun doReturn(): PARENT
     }

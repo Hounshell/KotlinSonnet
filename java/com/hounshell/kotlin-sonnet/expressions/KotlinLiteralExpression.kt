@@ -2,13 +2,7 @@ package com.hounshell.kotlin_sonnet.expressions
 
 import com.hounshell.kotlin_sonnet.CodeWriter
 
-class KotlinLiteralExpression(private val representation: String) : KotlinExpression
-{
-    override fun writeTo(writer: CodeWriter, indent: String)
-    {
-        writer.write(representation)
-    }
-}
+class KotlinLiteralExpression(representation: String) : KotlinSimpleExpression(representation)
 
 fun literal(value: Boolean) = KotlinLiteralExpression(value.toString())
 

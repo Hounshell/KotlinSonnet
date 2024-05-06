@@ -4,6 +4,9 @@ import com.hounshell.kotlin_sonnet.CodeWriter
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForUnit
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForValue
+import com.hounshell.kotlin_sonnet.functions.KotlinFunction
+import com.hounshell.kotlin_sonnet.functions.KotlinFunctionForUnit
+import com.hounshell.kotlin_sonnet.functions.KotlinFunctionForValue
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 abstract class KotlinFile
@@ -19,8 +22,11 @@ abstract class KotlinFile
 
         fun addImport(type: KotlinTypeReference): Builder<PARENT>
 
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
-        fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
+        fun addFunction(name: String): KotlinFunctionForUnit.Builder<Builder<PARENT>>
+        fun addFunction(name: String, returnType: KotlinTypeReference): KotlinFunctionForValue.Builder<Builder<PARENT>>
+
+        fun addFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
+        fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
 
         // TODO: Support more contents of a file.
 
@@ -42,7 +48,7 @@ abstract class KotlinFile
         private class Impl<PARENT>(private val parent: PARENT) : BuilderAndWriter<PARENT> {
             private var packageName: String? = null
             private val classImports: MutableList<KotlinClassImport> = mutableListOf()
-            private val extensionFunctions: MutableList<KotlinExtensionFunction.BuilderAndWriter<*, *>> = mutableListOf()
+            private val topLevelFunctions: MutableList<KotlinFunction.BuilderAndWriter<*, *>> = mutableListOf()
 
             override fun packageName(packageName: String?): Builder<PARENT>
             {
@@ -56,15 +62,27 @@ abstract class KotlinFile
                 return this
             }
 
-            override fun addExtensionFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionForUnit.impl(onType, name, this as Builder<PARENT>)
-                extensionFunctions.add(function)
+            override fun addFunction(name: String): KotlinFunctionForUnit.Builder<Builder<PARENT>> {
+                val function = KotlinFunctionForUnit.impl(name, this as Builder<PARENT>)
+                topLevelFunctions.add(function)
                 return function
             }
 
-            override fun addExtensionFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
+            override fun addFunction(name: String, returnType: KotlinTypeReference): KotlinFunctionForValue.Builder<Builder<PARENT>> {
+                val function = KotlinFunctionForValue.impl(name, returnType, this as Builder<PARENT>)
+                topLevelFunctions.add(function)
+                return function
+            }
+
+            override fun addFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionForUnit.impl(onType, name, this as Builder<PARENT>)
+                topLevelFunctions.add(function)
+                return function
+            }
+
+            override fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
                 val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, this as Builder<PARENT>)
-                extensionFunctions.add(function)
+                topLevelFunctions.add(function)
                 return function
             }
 
@@ -86,9 +104,9 @@ abstract class KotlinFile
                     }
                 }
 
-                for (extensionFunction in extensionFunctions) {
+                for (function in topLevelFunctions) {
                     writer.write("\n")
-                    extensionFunction.writeTo(writer, "")
+                    function.writeTo(writer, "")
                 }
 
                 // TODO: Support more contents of a file.

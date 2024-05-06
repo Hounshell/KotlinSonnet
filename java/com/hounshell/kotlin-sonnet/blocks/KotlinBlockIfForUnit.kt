@@ -10,26 +10,30 @@ abstract class KotlinBlockIfForUnit : KotlinBlockForUnit()
     interface IfContinuation<PARENT> {
         fun endIf(): PARENT
 
+        fun _else_(work: KotlinBlockElseForUnit.Builder<PARENT>.() -> Unit) = elseBlock(work)
         fun elseBlock(work: KotlinBlockElseForUnit.Builder<PARENT>.() -> Unit): PARENT
 
-        fun elseIfBlock(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT>
+        fun _else_if_(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit) = elseIf(condition, work)
+        fun elseIf(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT>
     }
 
     interface Builder<PARENT> :
         KotlinBlockForUnit.Builder<Builder<PARENT>, PARENT> {
         fun endIf(): PARENT
 
+        fun _else_() = elseBlock()
         fun elseBlock(): KotlinBlockElseForUnit.Builder<PARENT>
 
-        fun elseIfBlock(condition: KotlinExpression): Builder<PARENT>
+        fun _else_if_(condition: KotlinExpression) = elseIf(condition)
+        fun elseIf(condition: KotlinExpression): Builder<PARENT>
 
         fun define(work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT> {
             apply(work)
             return object: IfContinuation<PARENT> {
                 override fun endIf() = this@Builder.endIf()
                 override fun elseBlock(work: KotlinBlockElseForUnit.Builder<PARENT>.() -> Unit) = this@Builder.elseBlock().define(work)
-                override fun elseIfBlock(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit) =
-                    this@Builder.elseIfBlock(condition).define(work)
+                override fun elseIf(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit) =
+                    this@Builder.elseIf(condition).define(work)
             }
         }
     }
@@ -56,7 +60,7 @@ abstract class KotlinBlockIfForUnit : KotlinBlockForUnit()
 
             override fun endIf() = parent
 
-            override fun elseIfBlock(condition: KotlinExpression): Builder<PARENT> {
+            override fun elseIf(condition: KotlinExpression): Builder<PARENT> {
                 val next = Impl(condition, false, parent)
                 nextBlock = next
                 return next

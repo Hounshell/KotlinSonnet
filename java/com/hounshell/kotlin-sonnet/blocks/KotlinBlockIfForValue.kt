@@ -10,26 +10,28 @@ abstract class KotlinBlockIfForValue : KotlinBlockForValue()
     interface IfContinuation<PARENT> {
         fun endIf(): PARENT
 
+        fun _else_(work: KotlinBlockElseForValue.Builder<PARENT>.() -> Unit) = elseBlock(work)
         fun elseBlock(work: KotlinBlockElseForValue.Builder<PARENT>.() -> Unit): PARENT
 
-        fun elseIfBlock(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT>
+        fun elseIf(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT>
     }
 
     interface Builder<PARENT> :
         KotlinBlockForValue.Builder<Builder<PARENT>, PARENT> {
         fun endIf(): PARENT
 
+        fun _else() = elseBlock()
         fun elseBlock(): KotlinBlockElseForValue.Builder<PARENT>
 
-        fun elseIfBlock(condition: KotlinExpression): Builder<PARENT>
+        fun elseIf(condition: KotlinExpression): Builder<PARENT>
 
         fun define(work: Builder<PARENT>.() -> Unit): IfContinuation<PARENT> {
             apply(work)
             return object: IfContinuation<PARENT> {
                 override fun endIf() = this@Builder.endIf()
                 override fun elseBlock(work: KotlinBlockElseForValue.Builder<PARENT>.() -> Unit) = this@Builder.elseBlock().define(work)
-                override fun elseIfBlock(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit) =
-                    this@Builder.elseIfBlock(condition).define(work)
+                override fun elseIf(condition: KotlinExpression, work: Builder<PARENT>.() -> Unit) =
+                    this@Builder.elseIf(condition).define(work)
             }
         }
     }
@@ -56,7 +58,7 @@ abstract class KotlinBlockIfForValue : KotlinBlockForValue()
 
             override fun endIf() = parent
 
-            override fun elseIfBlock(condition: KotlinExpression): Builder<PARENT> {
+            override fun elseIf(condition: KotlinExpression): Builder<PARENT> {
                 val next = Impl(condition, false, parent)
                 nextBlock = next
                 return next

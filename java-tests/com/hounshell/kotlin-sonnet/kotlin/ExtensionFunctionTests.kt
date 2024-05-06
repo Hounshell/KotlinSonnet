@@ -2,6 +2,7 @@ package com.hounshell.kotlin_sonnet.kotlin
 
 import com.google.common.truth.Truth.assertThat
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet.expressions._this_
 import com.hounshell.kotlin_sonnet.expressions.add
 import com.hounshell.kotlin_sonnet.expressions.and
 import com.hounshell.kotlin_sonnet.expressions.literal
@@ -24,20 +25,20 @@ class ExtensionFunctionTests {
         val parent = KotlinFiles()
         val file = parent
             .addKotlinFile("foo.kt").define {
-                addExtensionFunction(type(String::class.java), "takeUntil").define {
+                addFunction(type(String::class.java), "takeUntil").define {
                     val paramSeparator = variable("separator")
                     val paramMaxLength = variable("maxLength")
 
                     addParameter(parameter(paramSeparator, type(String::class.java)))
                     addParameter(parameter(paramMaxLength, nullableType(Int::class.java)))
 
-                    ifBlock(literal(true)).define {
+                    _if_(literal(true)).define {
                         expression(literal(1))
-                    }.elseIfBlock(literal(false)) {
+                    }.elseIf(literal(false)) {
                         expression(literal(2))
-                    }.elseIfBlock(literal(7)) {
+                    }.elseIf(literal(7)) {
                         expression(literal(3))
-                    }.elseBlock {
+                    }._else_ {
                         expression(literal(42))
                     }
                         .expression((literal(4)))
@@ -58,7 +59,7 @@ class ExtensionFunctionTests {
                     )
                 }
 
-                addExtensionFunction(type(String::class.java), "printAndReturn", type(String::class.java))
+                addFunction("printAndReturn", type(String::class.java))
                     .expression(literal(true))
                     .expression(literal(7F))
                     .ifBlock(
@@ -72,7 +73,7 @@ class ExtensionFunctionTests {
                         )
                     ).define {
                         expression(literal(7))
-                        doReturn(literal(18))
+                        doReturn(_this_)
                     }.endIf()
 
                     .doReturn(literal("42"))
@@ -83,5 +84,10 @@ class ExtensionFunctionTests {
         file.writeTo(CodeWriter(writer))
 
         assertThat(writer.toString()).isEqualTo("")
+    }
+
+    fun foo(test: Boolean): Int {
+        val result = if (test) { return 7 } else { 8 }
+        return result
     }
 }

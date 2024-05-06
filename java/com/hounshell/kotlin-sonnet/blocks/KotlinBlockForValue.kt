@@ -11,6 +11,7 @@ abstract class KotlinBlockForValue : KotlinBlock()
 {
     interface Builder<BUILDER : Builder<BUILDER, PARENT>, PARENT> : KotlinBlock.Builder<BUILDER>
     {
+        fun _if_(condition: KotlinExpression) = ifBlock(condition)
         fun ifBlock(condition: KotlinExpression): KotlinBlockIfForValue.Builder<BUILDER>
         fun doReturn(expression: KotlinExpression): PARENT
     }
