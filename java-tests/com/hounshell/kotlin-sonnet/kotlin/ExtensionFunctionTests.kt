@@ -99,9 +99,4 @@ class ExtensionFunctionTests {
 
         assertThat(writer.toString()).isEqualTo("")
     }
-
-    fun foo(test: Boolean): Int {
-        val result = if (test) { return 7 } else { 8 }
-        return result
-    }
 }
