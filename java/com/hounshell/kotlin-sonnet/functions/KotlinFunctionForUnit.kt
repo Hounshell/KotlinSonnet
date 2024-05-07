@@ -16,19 +16,25 @@ sealed class KotlinFunctionForUnit: KotlinFunctionBaseForUnit()
     {
         fun <PARENT> impl(
             name: String,
+            isOpen: Boolean,
+            isOverride: Boolean,
             tailRecursion: Boolean,
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             name,
+            isOpen,
+            isOverride,
             tailRecursion,
             parent)
 
         private class Impl<PARENT>(
             name: String,
+            isOpen: Boolean,
+            isOverride: Boolean,
             tailRecursion: Boolean,
             parent: PARENT
         ) : KotlinFunctionBaseForUnit.BaseImpl<Builder<PARENT>, PARENT>(
-            KotlinSignature.impl(name, tailRecursion = tailRecursion),
+            KotlinSignature.impl(name, tailRecursion = tailRecursion, isOpen = isOpen, isOverride = isOverride, parent = null),
             parent
         ),
             BuilderAndWriter<PARENT>

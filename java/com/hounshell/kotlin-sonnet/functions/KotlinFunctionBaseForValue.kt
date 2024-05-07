@@ -10,15 +10,14 @@ abstract class KotlinFunctionBaseForValue: KotlinBlockForValue()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinBlockForValue.Builder<BUILDER, PARENT>,
-        KotlinFunction.Builder<BUILDER, PARENT>,
-        KotlinSignature.Builder
+        KotlinFunction.Builder<BUILDER, PARENT>
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinBlockForValue.BuilderAndWriter<BUILDER, PARENT>,
         Builder<BUILDER, PARENT>
 
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
-        private val signature: KotlinSignature.BuilderAndWriter,
+        private val signature: KotlinSignature.BuilderAndWriter<Nothing?>,
         parent: PARENT
     ) : KotlinBlockForValue.BaseImpl<BUILDER, PARENT>(parent),
         BuilderAndWriter<BUILDER, PARENT>

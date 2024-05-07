@@ -1,6 +1,5 @@
 package com.hounshell.kotlin_sonnet.functions
 
-import com.hounshell.kotlin_sonnet.blocks.KotlinBlockForValue
 import com.hounshell.kotlin_sonnet.types.KotlinTypeReference
 
 sealed class KotlinFunctionForValue: KotlinFunctionBaseForValue()
@@ -18,21 +17,27 @@ sealed class KotlinFunctionForValue: KotlinFunctionBaseForValue()
         fun <PARENT> impl(
             name: String,
             returnType: KotlinTypeReference,
+            isOpen: Boolean,
+            isOverride: Boolean,
             tailRecursion: Boolean,
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             name,
             returnType,
+            isOpen,
+            isOverride,
             tailRecursion,
             parent)
 
         private class Impl<PARENT>(
             name: String,
             returnType: KotlinTypeReference,
+            isOpen: Boolean,
+            isOverride: Boolean,
             tailRecursion: Boolean,
             parent: PARENT
         ) : KotlinFunctionBaseForValue.BaseImpl<Builder<PARENT>, PARENT>(
-            KotlinSignature.impl(name, returnType, tailRecursion = tailRecursion),
+            KotlinSignature.impl(name, returnType, isOpen = isOpen, isOverride = isOverride, tailRecursion = tailRecursion, parent = null),
             parent
         ),
             BuilderAndWriter<PARENT>

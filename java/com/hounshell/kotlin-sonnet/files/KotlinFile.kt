@@ -1,6 +1,10 @@
 package com.hounshell.kotlin_sonnet.files
 
 import com.hounshell.kotlin_sonnet.CodeWriter
+import com.hounshell.kotlin_sonnet._template.KotlinAbstractClass
+import com.hounshell.kotlin_sonnet.classes.KotlinClass
+import com.hounshell.kotlin_sonnet.classes.KotlinFinalClass
+import com.hounshell.kotlin_sonnet.classes.KotlinOpenClass
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunction
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForUnit
 import com.hounshell.kotlin_sonnet.functions.KotlinExtensionFunctionForValue
@@ -28,6 +32,10 @@ abstract class KotlinFile
         fun addFunction(onType: KotlinTypeReference, name: String, tailRecursion: Boolean = false): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
         fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference, tailRecursion: Boolean = false): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
 
+        fun addFinalClass(name: String): KotlinFinalClass.Builder<Builder<PARENT>>
+        fun addOpenClass(name: String): KotlinOpenClass.Builder<Builder<PARENT>>
+        fun addAbstractClass(name: String): KotlinAbstractClass.Builder<Builder<PARENT>>
+
         // TODO: Support more contents of a file.
 
         fun define(work: Builder<PARENT>.() -> Unit): PARENT {
@@ -49,6 +57,7 @@ abstract class KotlinFile
             private var packageName: String? = null
             private val classImports: MutableList<KotlinClassImport> = mutableListOf()
             private val topLevelFunctions: MutableList<KotlinFunction.BuilderAndWriter<*, *>> = mutableListOf()
+            private val classes: MutableList<KotlinClass.BaseBuilderAndWriter<*, *>> = mutableListOf()
 
             override fun packageName(packageName: String?): Builder<PARENT>
             {
@@ -63,27 +72,48 @@ abstract class KotlinFile
             }
 
             override fun addFunction(name: String, tailRecursion: Boolean): KotlinFunctionForUnit.Builder<Builder<PARENT>> {
-                val function = KotlinFunctionForUnit.impl(name, tailRecursion, this as Builder<PARENT>)
+                val function = KotlinFunctionForUnit.impl(name, false, false, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
             override fun addFunction(name: String, returnType: KotlinTypeReference, tailRecursion: Boolean): KotlinFunctionForValue.Builder<Builder<PARENT>> {
-                val function = KotlinFunctionForValue.impl(name, returnType, tailRecursion, this as Builder<PARENT>)
+                val function = KotlinFunctionForValue.impl(name, returnType, false, false, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
             override fun addFunction(onType: KotlinTypeReference, name: String, tailRecursion: Boolean): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionForUnit.impl(onType, name, tailRecursion, this as Builder<PARENT>)
+                val function = KotlinExtensionFunctionForUnit.impl(onType, name, false, false, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
             override fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference, tailRecursion: Boolean): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, tailRecursion, this as Builder<PARENT>)
+                val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, false, false, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
+            }
+
+            override fun addFinalClass(name: String): KotlinFinalClass.Builder<Builder<PARENT>>
+            {
+                val newClass = KotlinFinalClass.impl(name, this as Builder<PARENT>)
+                classes.add(newClass)
+                return newClass
+            }
+
+            override fun addOpenClass(name: String): KotlinOpenClass.Builder<Builder<PARENT>>
+            {
+                val newClass = KotlinOpenClass.impl(name, this as Builder<PARENT>)
+                classes.add(newClass)
+                return newClass
+            }
+
+            override fun addAbstractClass(name: String): KotlinAbstractClass.Builder<Builder<PARENT>>
+            {
+                val newClass = KotlinAbstractClass.impl(name, this as Builder<PARENT>)
+                classes.add(newClass)
+                return newClass
             }
 
             // TODO: Classes, Interfaces, Enums, Static imports, ...?
@@ -102,6 +132,11 @@ abstract class KotlinFile
                     {
                         classImport.writeTo(writer)
                     }
+                }
+
+                for (classDefinition in classes) {
+                    writer.write("\n")
+                    classDefinition.writeTo(writer, "")
                 }
 
                 for (function in topLevelFunctions) {

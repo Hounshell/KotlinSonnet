@@ -11,42 +11,70 @@ sealed class KotlinSignature
         fun writeTo(writer: CodeWriter, indent: String)
     }
 
-    interface Builder
+    interface Builder<PARENT>
     {
-        fun addParameter(parameter: KotlinParameterDeclaration): Builder
+        fun addParameter(parameter: KotlinParameterDeclaration): Builder<PARENT>
+        fun endFunctionSignature(): PARENT
     }
 
-    interface BuilderAndWriter:
-        Builder,
+    interface BuilderAndWriter<PARENT> :
+        Builder<PARENT>,
         Writer
 
-    companion object {
-        fun impl(
+    companion object
+    {
+        fun <PARENT> impl(
             name: String,
             returnType: KotlinTypeReference? = null,
             onType: KotlinTypeReference? = null,
-            tailRecursion: Boolean = false
-        ): BuilderAndWriter = Impl(name, returnType, onType, tailRecursion)
+            isOpen: Boolean = false,
+            isOverride: Boolean = false,
+            tailRecursion: Boolean = false,
+            parent: PARENT
+        ): BuilderAndWriter<PARENT> = Impl(name, returnType, onType, isOpen, isOverride, tailRecursion, parent)
 
-        private class Impl(
+        private class Impl<PARENT>(
             val name: String,
             val returnType: KotlinTypeReference?,
             val onType: KotlinTypeReference?,
-            val tailRecursion: Boolean
-        ) : BuilderAndWriter {
+            val isOpen: Boolean = false,
+            val isOverride: Boolean = false,
+            val tailRecursion: Boolean,
+            val parent: PARENT
+        ) : BuilderAndWriter<PARENT>
+        {
             private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
 
-            override fun addParameter(parameter: KotlinParameterDeclaration): Builder
+            override fun addParameter(parameter: KotlinParameterDeclaration): Builder<PARENT>
             {
                 parameters.add(parameter)
                 return this
+            }
+
+            override fun endFunctionSignature(): PARENT
+            {
+                return parent
             }
 
             override fun writeTo(writer: CodeWriter, indent: String)
             {
                 writer.write(indent)
 
-                if (tailRecursion) {
+                if (isOpen && isOverride)
+                {
+                    writer.write("override ")
+                }
+                else if (isOverride)
+                {
+                    writer.write("final override ")
+                }
+                else if (isOpen)
+                {
+                    writer.write("open ")
+                }
+
+                if (tailRecursion)
+                {
                     writer.write("tailrec ")
                 }
 

@@ -10,8 +10,10 @@ import com.hounshell.kotlin_sonnet.types.KotlinParameterDeclaration
 abstract class KotlinFunction: KotlinBlock()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
-        KotlinBlock.Builder<BUILDER>,
-            KotlinSignature.Builder
+        KotlinBlock.Builder<BUILDER>
+    {
+        fun addParameter(parameter: KotlinParameterDeclaration): BUILDER
+    }
 
     interface BuilderAndWriter<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinBlock.BuilderAndWriter<BUILDER>,

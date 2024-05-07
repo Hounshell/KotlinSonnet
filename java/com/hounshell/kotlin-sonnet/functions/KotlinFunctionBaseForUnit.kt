@@ -10,8 +10,7 @@ abstract class KotlinFunctionBaseForUnit: KotlinBlockForUnit()
 {
     interface Builder<BUILDER: Builder<BUILDER, PARENT>, PARENT> :
         KotlinBlockForUnit.Builder<BUILDER, PARENT>,
-        KotlinFunction.Builder<BUILDER, PARENT>,
-        KotlinSignature.Builder
+        KotlinFunction.Builder<BUILDER, PARENT>
     {
         fun endFunction(): PARENT
 
@@ -26,7 +25,7 @@ abstract class KotlinFunctionBaseForUnit: KotlinBlockForUnit()
         Builder<BUILDER, PARENT>
 
     protected abstract class BaseImpl<BUILDER: Builder<BUILDER, PARENT>, PARENT>(
-        private val signature: KotlinSignature.BuilderAndWriter,
+        private val signature: KotlinSignature.BuilderAndWriter<Nothing?>,
         private val parent: PARENT
     ) : KotlinBlockForUnit.BaseImpl<BUILDER, PARENT>(parent),
         BuilderAndWriter<BUILDER, PARENT>
