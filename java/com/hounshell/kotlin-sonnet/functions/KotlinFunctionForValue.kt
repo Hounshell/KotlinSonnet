@@ -18,18 +18,21 @@ sealed class KotlinFunctionForValue: KotlinFunctionBaseForValue()
         fun <PARENT> impl(
             name: String,
             returnType: KotlinTypeReference,
+            tailRecursion: Boolean,
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             name,
             returnType,
+            tailRecursion,
             parent)
 
         private class Impl<PARENT>(
             name: String,
             returnType: KotlinTypeReference,
+            tailRecursion: Boolean,
             parent: PARENT
         ) : KotlinFunctionBaseForValue.BaseImpl<Builder<PARENT>, PARENT>(
-            KotlinSignature.impl(name, returnType),
+            KotlinSignature.impl(name, returnType, tailRecursion = tailRecursion),
             parent
         ),
             BuilderAndWriter<PARENT>

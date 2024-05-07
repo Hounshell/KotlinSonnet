@@ -24,13 +24,15 @@ sealed class KotlinSignature
         fun impl(
             name: String,
             returnType: KotlinTypeReference? = null,
-            onType: KotlinTypeReference? = null
-        ): BuilderAndWriter = Impl(name, returnType, onType)
+            onType: KotlinTypeReference? = null,
+            tailRecursion: Boolean = false
+        ): BuilderAndWriter = Impl(name, returnType, onType, tailRecursion)
 
         private class Impl(
             val name: String,
             val returnType: KotlinTypeReference?,
-            val onType: KotlinTypeReference?
+            val onType: KotlinTypeReference?,
+            val tailRecursion: Boolean
         ) : BuilderAndWriter {
             private val parameters: MutableList<KotlinParameterDeclaration> = mutableListOf()
 
@@ -42,14 +44,20 @@ sealed class KotlinSignature
 
             override fun writeTo(writer: CodeWriter, indent: String)
             {
+                writer.write(indent)
+
+                if (tailRecursion) {
+                    writer.write("tailrec ")
+                }
+
+                writer.write("fun ")
+
                 if (onType != null)
                 {
-                    writer.write("${indent}fun ${onType.asDeclaration()}.$name")
+                    writer.write("${onType.asDeclaration()}.")
                 }
-                else
-                {
-                    writer.write("${indent}fun $name")
-                }
+
+                writer.write(name)
 
                 if (parameters.isEmpty())
                 {

@@ -23,20 +23,23 @@ sealed class KotlinExtensionFunctionForValue:
             onType: KotlinTypeReference,
             name: String,
             returnType: KotlinTypeReference,
+            tailRecursion: Boolean,
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             onType,
             name,
             returnType,
+            tailRecursion,
             parent)
 
         private class Impl<PARENT>(
             onType: KotlinTypeReference,
             name: String,
             returnType: KotlinTypeReference,
+            tailRecursion: Boolean,
             parent: PARENT
         ) : KotlinFunctionBaseForValue.BaseImpl<Builder<PARENT>, PARENT>(
-            KotlinSignature.impl(name, returnType, onType),
+            KotlinSignature.impl(name, returnType, onType, tailRecursion = tailRecursion),
             parent
         ),
             BuilderAndWriter<PARENT>

@@ -27,7 +27,7 @@ class ExtensionFunctionTests {
         val parent = KotlinFiles()
         val file = parent
             .addKotlinFile("foo.kt").define {
-                addFunction(type(String::class.java), "takeUntil").define {
+                addFunction(type(String::class.java), "takeUntil", tailRecursion = true).define {
                     val paramSeparator = variable("separator")
                     val paramMaxLength = variable("maxLength")
 

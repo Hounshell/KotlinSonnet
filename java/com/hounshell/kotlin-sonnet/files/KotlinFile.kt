@@ -22,11 +22,11 @@ abstract class KotlinFile
 
         fun addImport(type: KotlinTypeReference): Builder<PARENT>
 
-        fun addFunction(name: String): KotlinFunctionForUnit.Builder<Builder<PARENT>>
-        fun addFunction(name: String, returnType: KotlinTypeReference): KotlinFunctionForValue.Builder<Builder<PARENT>>
+        fun addFunction(name: String, tailRecursion: Boolean = false): KotlinFunctionForUnit.Builder<Builder<PARENT>>
+        fun addFunction(name: String, returnType: KotlinTypeReference, tailRecursion: Boolean = false): KotlinFunctionForValue.Builder<Builder<PARENT>>
 
-        fun addFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
-        fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
+        fun addFunction(onType: KotlinTypeReference, name: String, tailRecursion: Boolean = false): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>>
+        fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference, tailRecursion: Boolean = false): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>>
 
         // TODO: Support more contents of a file.
 
@@ -62,26 +62,26 @@ abstract class KotlinFile
                 return this
             }
 
-            override fun addFunction(name: String): KotlinFunctionForUnit.Builder<Builder<PARENT>> {
-                val function = KotlinFunctionForUnit.impl(name, this as Builder<PARENT>)
+            override fun addFunction(name: String, tailRecursion: Boolean): KotlinFunctionForUnit.Builder<Builder<PARENT>> {
+                val function = KotlinFunctionForUnit.impl(name, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
-            override fun addFunction(name: String, returnType: KotlinTypeReference): KotlinFunctionForValue.Builder<Builder<PARENT>> {
-                val function = KotlinFunctionForValue.impl(name, returnType, this as Builder<PARENT>)
+            override fun addFunction(name: String, returnType: KotlinTypeReference, tailRecursion: Boolean): KotlinFunctionForValue.Builder<Builder<PARENT>> {
+                val function = KotlinFunctionForValue.impl(name, returnType, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
-            override fun addFunction(onType: KotlinTypeReference, name: String): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionForUnit.impl(onType, name, this as Builder<PARENT>)
+            override fun addFunction(onType: KotlinTypeReference, name: String, tailRecursion: Boolean): KotlinExtensionFunctionForUnit.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionForUnit.impl(onType, name, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }
 
-            override fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
-                val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, this as Builder<PARENT>)
+            override fun addFunction(onType: KotlinTypeReference, name: String, returnType: KotlinTypeReference, tailRecursion: Boolean): KotlinExtensionFunctionForValue.Builder<Builder<PARENT>> {
+                val function = KotlinExtensionFunctionForValue.impl(onType, name, returnType, tailRecursion, this as Builder<PARENT>)
                 topLevelFunctions.add(function)
                 return function
             }

@@ -22,18 +22,21 @@ sealed class KotlinExtensionFunctionForUnit:
         fun <PARENT> impl(
             onType: KotlinTypeReference,
             name: String,
+            tailRecursion: Boolean,
             parent: PARENT
         ): BuilderAndWriter<PARENT> = Impl(
             onType,
             name,
+            tailRecursion,
             parent)
 
         private class Impl<PARENT>(
             onType: KotlinTypeReference,
             name: String,
+            tailRecursion: Boolean,
             parent: PARENT
         ) : KotlinFunctionBaseForUnit.BaseImpl<Builder<PARENT>, PARENT>(
-            KotlinSignature.impl(name, onType = onType),
+            KotlinSignature.impl(name, onType = onType, tailRecursion = tailRecursion),
             parent
         ),
             BuilderAndWriter<PARENT>
